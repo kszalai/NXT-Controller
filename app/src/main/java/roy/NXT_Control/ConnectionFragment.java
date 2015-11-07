@@ -1,63 +1,71 @@
 package roy.NXT_Control;
 
-/**
- * Created by Brandon on 10/31/2015.
- */
-
-import android.app.Activity;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
-public class ConnectionFragment extends Fragment {
+import roy.NXT_Control.BTConnectFragment.BTDialog;
 
-    private ImageView bluetoothIconBlue, bluetoothIconBlack;
+public class ConnectionFragment extends Fragment{
+
+    private ImageView bluetoothIcon;
     private TextView status;
-    private Button clickButton;
-    private int click = 0;
-
-    public ConnectionFragment() {
-        // Required empty public constructor
-    }
-
+    private ToggleButton connectButton;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_connection, container, false);
-
-        bluetoothIconBlue = (ImageView) v.findViewById(R.id.bt_icon_blue);
-        bluetoothIconBlack = (ImageView) v.findViewById(R.id.bt_icon_black);
-        bluetoothIconBlue.setVisibility(View.INVISIBLE);
-        InitializeButton(v);
-
-        return v;
+    public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
+        return inflater.inflate(R.layout.fragment_connection,container,false);
     }
 
-    public void InitializeButton(View v){
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        View v = getView();
+
+        bluetoothIcon = (ImageView) v.findViewById(R.id.bt_icon);
+
         status = (TextView) v.findViewById(R.id.connection_status);
-        clickButton = (Button) v.findViewById(R.id.connect_button);
-        clickButton.setOnClickListener(new View.OnClickListener() {
+
+        connectButton = (ToggleButton) v.findViewById(R.id.tbtn_connect);
+        connectButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                click++;
-                if(click % 2 == 1) {
+                //Toggles the Button through on and off
+                if (connectButton.isChecked()) {
+                    BTDialog btDialog = new BTDialog();
+                    btDialog.show(getFragmentManager(),"Select a Device");
+                    btDialog.setCancelable(true);
                     status.setText("Connected");
-                    clickButton.setText("Disconnect");
-                    bluetoothIconBlue.setVisibility(View.VISIBLE);
-                }
-                else {
+                    connectButton.setChecked(true);
+                    bluetoothIcon.setImageResource(R.mipmap.bt_icon_blue);
+                } else {
                     status.setText("Disconnected");
-                    clickButton.setText("Connect");
-                    bluetoothIconBlue.setVisibility(View.INVISIBLE);
+                    connectButton.setChecked(false);
+                    bluetoothIcon.setImageResource(R.mipmap.bt_icon_black);
                 }
             }
         });
     }
+
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                BluetoothDevice btDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            }
+        }
+    };
 }

@@ -2,6 +2,7 @@ package roy.NXT_Control;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,28 +21,28 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
     SeekBar powerControl;
     TextView powerAmount;
 
-    public DriveFragment() {
-        // Required empty public constructor
+    @Override
+    public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
+        return inflater.inflate(R.layout.fragment_drive,container,false);
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_drive, container, false);
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        View v = getView();
 
         //Declare buttons
-        upButton = (ImageButton) view.findViewById(R.id.btn_upDrive);
+        upButton = (ImageButton) v.findViewById(R.id.btn_upDrive);
         upButton.setOnTouchListener(this);
-        downButton = (ImageButton) view.findViewById(R.id.btn_downDrive);
+        downButton = (ImageButton) v.findViewById(R.id.btn_downDrive);
         downButton.setOnTouchListener(this);
-        leftButton = (ImageButton) view.findViewById(R.id.btn_leftDrive);
+        leftButton = (ImageButton) v.findViewById(R.id.btn_leftDrive);
         leftButton.setOnTouchListener(this);
-        rightButton = (ImageButton) view.findViewById(R.id.btn_rightDrive);
+        rightButton = (ImageButton) v.findViewById(R.id.btn_rightDrive);
         rightButton.setOnTouchListener(this);
-        powerControl = (SeekBar) view.findViewById(R.id.sb_powerLevel);
-        powerAmount = (TextView) view.findViewById(R.id.tv_poweramount);
+        powerControl = (SeekBar) v.findViewById(R.id.sb_powerLevel);
+        powerAmount = (TextView) v.findViewById(R.id.tv_poweramount);
 
         //Set Power Level Change Listener
         powerControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -60,7 +61,6 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
                 //Required but unused
             }
         });
-        return view;
     }
 
     //Method is to contain bluetooth movement methods
