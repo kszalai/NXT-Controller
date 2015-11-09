@@ -1,9 +1,5 @@
 package roy.NXT_Control;
 
-/**
- * Created by Brandon on 10/31/2015.
- */
-
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;

@@ -1,4 +1,4 @@
-package roy.NXT_Control.BTConnectFragment;
+package roy.NXT_Control.BTConnection;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
