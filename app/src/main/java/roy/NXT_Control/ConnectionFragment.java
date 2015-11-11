@@ -1,6 +1,7 @@
 package roy.NXT_Control;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
@@ -24,6 +25,7 @@ public class ConnectionFragment extends Fragment{
     private TextView status;
     private TextView device;
     private ToggleButton connectButton;
+    private BluetoothAdapter btAdapter;
     private BluetoothDevice robot;
     private BluetoothSocket socket;
     static final int PICK_BLUETOOTH_DEVICE = 1;
@@ -43,6 +45,12 @@ public class ConnectionFragment extends Fragment{
 
         status = (TextView) v.findViewById(R.id.connection_status);
         device = (TextView) v.findViewById(R.id.tv_deviceConnected);
+
+        btAdapter =  BluetoothAdapter.getDefaultAdapter();
+        if(!btAdapter.isEnabled()){
+            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(intent,1000);
+        }
 
         connectButton = (ToggleButton) v.findViewById(R.id.tbtn_connect);
         connectButton.setOnClickListener(new View.OnClickListener() {
@@ -69,17 +77,6 @@ public class ConnectionFragment extends Fragment{
             }
         });
     }
-
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if(BluetoothDevice.ACTION_FOUND.equals(action)){
-                BluetoothDevice btDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            }
-        }
-    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

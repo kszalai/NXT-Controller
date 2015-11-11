@@ -37,6 +37,10 @@ public class BTDeviceListAdapter extends BaseAdapter{
         return position;
     }
 
+    public void setData(ArrayList<BluetoothDevice> deviceList){
+        c2v_listItems = deviceList;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
