@@ -1,27 +1,26 @@
 package roy.NXT_Control.BTConnection;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDialogFragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Set;
 
-import roy.NXT_Control.MainActivity;
 import roy.NXT_Control.R;
 
 public class BTDialog extends AppCompatActivity{
@@ -30,7 +29,29 @@ public class BTDialog extends AppCompatActivity{
     ListView lv_deviceList;
     ArrayList<BluetoothDevice> deviceList = new ArrayList<BluetoothDevice>();
     BTDeviceListAdapter btDeviceListAdapter;
-    BluetoothSocket socket;
+    ProgressDialog progDialog;
+    TextView topBanner;
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)) {
+                deviceList = new ArrayList<BluetoothDevice>();
+                progDialog.show();
+            }
+            else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                btDeviceListAdapter.setData(deviceList);
+                btDeviceListAdapter.notifyDataSetChanged();
+                progDialog.dismiss();
+            }
+            else if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                BluetoothDevice deviceFound = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                deviceList.add(deviceFound);
+                Toast.makeText(getApplicationContext(),"Found " + deviceFound.getName(),Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,18 +59,33 @@ public class BTDialog extends AppCompatActivity{
         setContentView(R.layout.fragment_device_connect);
 
         btAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(!btAdapter.isEnabled()){
-            Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 
-            startActivityForResult(intent, 1000);
-        }
+        //For Scan Button
+        progDialog = new ProgressDialog(this);
+        progDialog.setMessage("Scanning...");
+        progDialog.setCancelable(false);
+        progDialog.setButton(DialogInterface.BUTTON_NEGATIVE,"Cancel",new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                btAdapter.cancelDiscovery();
+            }
+        });
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(BluetoothDevice.ACTION_FOUND);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(receiver, filter);
+
+        topBanner = (TextView)findViewById(R.id.tv_fragTitleLabel);
 
         Set<BluetoothDevice> btDevices = btAdapter.getBondedDevices();
 
         deviceList.addAll(btDevices);
-        btDeviceListAdapter = new BTDeviceListAdapter(this,deviceList);
+        btDeviceListAdapter = new BTDeviceListAdapter(this, deviceList);
 
-        lv_deviceList = (ListView)findViewById(R.id.lv_devices);
+        lv_deviceList = (ListView) findViewById(R.id.lv_devices);
         lv_deviceList.setAdapter(btDeviceListAdapter);
 
         //Tap - Connect to a device
@@ -69,12 +105,15 @@ public class BTDialog extends AppCompatActivity{
         });
 
         //Scan Button
-        Button scanButton = (Button)findViewById(R.id.btn_scan);
+        Button scanButton = (Button) findViewById(R.id.btn_scan);
         scanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deviceList.clear();
                 btDeviceListAdapter.notifyDataSetChanged();
+                if(btAdapter.isDiscovering())
+                    btAdapter.cancelDiscovery();
+                topBanner.setText("Discovered Devices");
                 btAdapter.startDiscovery();
             }
         });
@@ -85,5 +124,11 @@ public class BTDialog extends AppCompatActivity{
         returnIntent.putExtra("device",0);
         setResult(Activity.RESULT_CANCELED,returnIntent);
         finish();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 }

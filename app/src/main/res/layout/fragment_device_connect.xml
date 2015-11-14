@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
+    android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:background="@color/white">
 
     <ListView
         android:layout_width="wrap_content"
@@ -9,7 +10,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_above="@+id/btn_scan"
-        android:layout_below="@+id/rl_fragTitle" />
+        android:layout_below="@+id/rl_deviceTitle" />
 
     <Button
         android:layout_width="wrap_content"
@@ -24,8 +25,29 @@
         android:layout_height="50dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/bluetoothBlue"
+        android:background="@color/colorPrimaryDark"
         android:id="@+id/rl_fragTitle">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btConnectDialog"
+            android:id="@+id/textView"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/white"
+            android:textIsSelectable="false"
+            android:textSize="20dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/rl_fragTitle"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/rl_deviceTitle"
+        android:background="@color/colorPrimary">
 
         <TextView
             android:layout_width="wrap_content"
