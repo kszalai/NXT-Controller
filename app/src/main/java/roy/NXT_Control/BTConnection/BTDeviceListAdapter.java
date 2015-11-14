@@ -37,6 +37,10 @@ public class BTDeviceListAdapter extends BaseAdapter{
         return position;
     }
 
+    public void setData(ArrayList<BluetoothDevice> discoveredDevices){
+        c2v_listItems = discoveredDevices;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
@@ -47,9 +51,11 @@ public class BTDeviceListAdapter extends BaseAdapter{
 
         TextView lv_deviceName = (TextView) convertView.findViewById(R.id.tv_deviceName);
         lv_deviceName.setText(c2v_listItems.get(position).getName());
+        lv_deviceName.setTextColor(convertView.getResources().getColor(R.color.black));
 
         TextView lv_macAddress = (TextView) convertView.findViewById(R.id.tv_macAddress);
         lv_macAddress.setText(c2v_listItems.get(position).getAddress());
+        lv_macAddress.setTextColor(convertView.getResources().getColor(R.color.black));
 
         return convertView;
     }
