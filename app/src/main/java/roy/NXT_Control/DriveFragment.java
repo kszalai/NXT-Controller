@@ -1,5 +1,6 @@
 package roy.NXT_Control;
 
+import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +21,7 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
     ImageButton rightButton;
     SeekBar powerControl;
     TextView powerAmount;
+    FragCommunicator fc;
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
@@ -31,6 +33,8 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
         super.onActivityCreated(savedInstanceState);
 
         View v = getView();
+
+        fc = (FragCommunicator)getActivity();
 
         //Declare buttons
         upButton = (ImageButton) v.findViewById(R.id.btn_upDrive);
@@ -73,13 +77,11 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
             case R.id.btn_upDrive:
                 if(theMotion.getAction() == MotionEvent.ACTION_DOWN) {
                     Toast.makeText(getView().getContext(), "Up Drive Down " + power, Toast.LENGTH_SHORT).show();
-                    cfp_moveMotor(0, power, 0x20);
-                    cfp_moveMotor(1, power, 0x20);
+                    fc.moveMotor(cfp_moveMotor(0,power,0x20),cfp_moveMotor(1,power,0x20));
                 }
                 else {
                     Toast.makeText(getView().getContext(), "Up Drive Up", Toast.LENGTH_SHORT).show();
-                    cfp_moveMotor(0, power, 0x00);
-                    cfp_moveMotor(1, power, 0x00);
+                    fc.moveMotor(cfp_moveMotor(0, power, 0x00),cfp_moveMotor(1, power, 0x00));
                 }
                 break;
             case R.id.btn_downDrive:
@@ -126,32 +128,26 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
 
     //Move motor method
     //Sends bluetooth package to move the motors
-    private void cfp_moveMotor(int motor,int speed, int state) {
-        try {
-            byte[] buffer = new byte[15];
+    private byte[] cfp_moveMotor(int motor,int speed, int state) {
+        byte[] buffer = new byte[15];
 
-            buffer[0] = (byte) (15-2);			//length lsb
-            buffer[1] = 0;						// length msb
-            buffer[2] =  0;						// direct command (with response)
-            buffer[3] = 0x04;					// set output state
-            buffer[4] = (byte) motor;			// output 1 (motor B)
-            buffer[5] = (byte) speed;			// power
-            buffer[6] = 1 + 2;					// motor on + brake between PWM
-            buffer[7] = 0;						// regulation
-            buffer[8] = 0;						// turn ration??
-            buffer[9] = (byte) state; //0x20;					// run state
-            buffer[10] = 0;
-            buffer[11] = 0;
-            buffer[12] = 0;
-            buffer[13] = 0;
-            buffer[14] = 0;
+        buffer[0] = (byte) (15-2);			//length lsb
+        buffer[1] = 0;						// length msb
+        buffer[2] =  0;						// direct command (with response)
+        buffer[3] = 0x04;					// set output state
+        buffer[4] = (byte) motor;			// output 1 (motor B)
+        buffer[5] = (byte) speed;			// power
+        buffer[6] = 1 + 2;					// motor on + brake between PWM
+        buffer[7] = 0;						// regulation
+        buffer[8] = 0;						// turn ration??
+        buffer[9] = (byte) state; //0x20;					// run state
+        buffer[10] = 0;
+        buffer[11] = 0;
+        buffer[12] = 0;
+        buffer[13] = 0;
+        buffer[14] = 0;
 
-            //os.write(buffer);
-            //os.flush();
-        }
-        catch (Exception e) {
-            //cv_label.setText("Error in MoveForward(" + e.getMessage() + ")");
-        }
+        return buffer;
     }
 
 

@@ -15,6 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import roy.NXT_Control.BTConnection.BTDialog;
 
 public class ConnectionFragment extends Fragment{
@@ -27,6 +30,9 @@ public class ConnectionFragment extends Fragment{
     private BluetoothDevice robot;
     private BluetoothSocket socket;
     static final int PICK_BLUETOOTH_DEVICE = 1;
+
+    private InputStream is = null;
+    private OutputStream os = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
@@ -64,6 +70,8 @@ public class ConnectionFragment extends Fragment{
                 else {
                     try{
                         socket.close();
+                        is.close();
+                        os.close();
                         status.setText("Disconnected");
                         device.setText("No Device");
                         connectButton.setChecked(false);
@@ -87,6 +95,8 @@ public class ConnectionFragment extends Fragment{
                 try {
                     socket = robot.createRfcommSocketToServiceRecord(java.util.UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
                     socket.connect();
+                    is = socket.getInputStream();
+                    os = socket.getOutputStream();
                     //Successful Connection
                     bluetoothIcon.setImageResource(R.mipmap.bt_icon_blue);
                     device.setText(robot.getName());
@@ -102,6 +112,17 @@ public class ConnectionFragment extends Fragment{
                 //User decided to cancel
                 connectButton.setChecked(false);
             }
+        }
+    }
+
+    public void moveMotor(byte[] leftMotor, byte[] rightMotor){
+        try{
+            os.write(leftMotor);
+            os.write(rightMotor);
+            os.flush();
+        }
+        catch(Exception e){
+            Toast.makeText(getContext(),"Move Motor!",Toast.LENGTH_SHORT).show();
         }
     }
 }
