@@ -6,4 +6,5 @@
     <string name="button_scan">Scan</string>
     <string name="fragment_connect_label">Paired Devices</string>
     <string name="btConnectDialog">Select a Device</string>
+    <string name="batteryLevel">Battery Level</string>
 </resources>

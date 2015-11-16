@@ -55,6 +55,40 @@
         android:layout_toEndOf="@+id/bt_icon"
         android:layout_marginTop="15dp"
         android:layout_marginLeft="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/batteryLevel"
+        android:id="@+id/tv_batteryLevel"
+        android:layout_below="@+id/connection_status"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="25dp" />
+
+    <SeekBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sb_batteryLevel"
+        android:layout_below="@+id/tv_batteryLevel"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
+        android:max="100"
+        android:clickable="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:id="@+id/tv_batteryAmount"
+        android:layout_alignBottom="@+id/tv_batteryLevel"
+        android:layout_toEndOf="@+id/connection_status"
+        android:layout_marginLeft="5dp" />
+
     <!-- Replace with @string/connection_status later on -->
 
 </RelativeLayout>

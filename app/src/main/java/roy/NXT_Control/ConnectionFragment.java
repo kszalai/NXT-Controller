@@ -7,10 +7,12 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -25,6 +27,8 @@ public class ConnectionFragment extends Fragment{
     private ImageView bluetoothIcon;
     private TextView status;
     private TextView device;
+    private SeekBar batteryLevel;
+    private TextView batteryAmount;
     private ToggleButton connectButton;
     private BluetoothAdapter btAdapter;
     private BluetoothDevice robot;
@@ -33,6 +37,19 @@ public class ConnectionFragment extends Fragment{
 
     private InputStream is = null;
     private OutputStream os = null;
+
+    FragCommunicator fc;
+
+    static ConnectionFragment newInstance(int num) {
+        ConnectionFragment f = new ConnectionFragment();
+
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        args.putInt("num", num);
+        f.setArguments(args);
+
+        return f;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
@@ -44,6 +61,8 @@ public class ConnectionFragment extends Fragment{
         super.onActivityCreated(savedInstanceState);
 
         View v = getView();
+
+        fc = (FragCommunicator)getActivity();
 
         bluetoothIcon = (ImageView) v.findViewById(R.id.bt_icon);
 
@@ -57,6 +76,7 @@ public class ConnectionFragment extends Fragment{
             startActivityForResult(intent, 1000);
         }
 
+        //Connect Device Button
         connectButton = (ToggleButton) v.findViewById(R.id.tbtn_connect);
         connectButton.setOnClickListener(new View.OnClickListener() {
 
@@ -83,8 +103,14 @@ public class ConnectionFragment extends Fragment{
                 }
             }
         });
+
+        //Battery Level
+        batteryLevel = (SeekBar)v.findViewById(R.id.sb_batteryLevel);
+        batteryAmount = (TextView)v.findViewById(R.id.tv_batteryAmount);
+        batteryLevel.setEnabled(false);
     }
 
+    //Gets result from selecting a device
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -97,6 +123,7 @@ public class ConnectionFragment extends Fragment{
                     socket.connect();
                     is = socket.getInputStream();
                     os = socket.getOutputStream();
+                    fc.sendBTDeviceDetails(btAdapter,robot,socket,is,os);
                     //Successful Connection
                     bluetoothIcon.setImageResource(R.mipmap.bt_icon_blue);
                     device.setText(robot.getName());
@@ -115,14 +142,31 @@ public class ConnectionFragment extends Fragment{
         }
     }
 
-    public void moveMotor(byte[] leftMotor, byte[] rightMotor){
+    //Gets battery level from robot
+    private void batteryLevel(){
         try{
-            os.write(leftMotor);
-            os.write(rightMotor);
-            os.flush();
+            byte [] buffer = new byte[15];
+
+            buffer[0] = (byte) (15-2);
+            buffer[1] = 0;
+            buffer[2] = 0;
+            buffer[3] = 0x0B;   //gets battery level
+            buffer[4] = 0;
+            buffer[5] = 0;
+            buffer[6] = 0;
+            buffer[7] = 0;
+            buffer[8] = 0;
+            buffer[9] = 0;
+            buffer[10] = 0;
+            buffer[11] = 0;
+            buffer[12] = 0;
+            buffer[13] = 0;
+            buffer[14] = 0;
+
+            Log.i("tag","Battery Level " + buffer[3]);
         }
         catch(Exception e){
-            Toast.makeText(getContext(),"Move Motor!",Toast.LENGTH_SHORT).show();
+
         }
     }
 }

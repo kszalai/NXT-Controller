@@ -1,6 +1,8 @@
 package roy.NXT_Control;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -13,6 +15,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class DriveFragment extends Fragment implements View.OnTouchListener{
 
     ImageButton upButton;
@@ -21,7 +26,24 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
     ImageButton rightButton;
     SeekBar powerControl;
     TextView powerAmount;
-    FragCommunicator fc;
+
+    //Bluetooth Stuff Needed
+    BluetoothAdapter btAdapter;
+    BluetoothDevice robot;
+    BluetoothSocket btSocket;
+    InputStream is;
+    OutputStream os;
+
+    static DriveFragment newInstance(int num) {
+        DriveFragment f = new DriveFragment();
+
+        // Supply num input as an argument.
+        Bundle args = new Bundle();
+        args.putInt("num", num);
+        f.setArguments(args);
+
+        return f;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
@@ -33,8 +55,6 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
         super.onActivityCreated(savedInstanceState);
 
         View v = getView();
-
-        fc = (FragCommunicator)getActivity();
 
         //Declare buttons
         upButton = (ImageButton) v.findViewById(R.id.btn_upDrive);
@@ -76,48 +96,37 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
         {
             case R.id.btn_upDrive:
                 if(theMotion.getAction() == MotionEvent.ACTION_DOWN) {
-                    Toast.makeText(getView().getContext(), "Up Drive Down " + power, Toast.LENGTH_SHORT).show();
-                    fc.moveMotor(cfp_moveMotor(0,power,0x20),cfp_moveMotor(1,power,0x20));
+                    cfp_moveMotor(0, power, 0x20);
+                    cfp_moveMotor(1, power, 0x20);
                 }
                 else {
-                    Toast.makeText(getView().getContext(), "Up Drive Up", Toast.LENGTH_SHORT).show();
-                    fc.moveMotor(cfp_moveMotor(0, power, 0x00),cfp_moveMotor(1, power, 0x00));
+                    cfp_moveMotor(0, power, 0x00);
+                    cfp_moveMotor(1, power, 0x00);
                 }
                 break;
             case R.id.btn_downDrive:
                 if(theMotion.getAction() == MotionEvent.ACTION_DOWN) {
-                    Toast.makeText(getView().getContext(), "Down Drive Down", Toast.LENGTH_SHORT).show();
                     cfp_moveMotor(0, -power, 0x20);
                     cfp_moveMotor(1, -power, 0x20);
                 }
                 else {
-                    Toast.makeText(getView().getContext(), "Down Drive Up", Toast.LENGTH_SHORT).show();
                     cfp_moveMotor(0, -power, 0x00);
                     cfp_moveMotor(1, -power, 0x00);
                 }
                 break;
             case R.id.btn_leftDrive:
                 if(theMotion.getAction() == MotionEvent.ACTION_DOWN) {
-                    Toast.makeText(getView().getContext(), "Left Drive Down", Toast.LENGTH_SHORT).show();
                     cfp_moveMotor(0, power, 0x20);
-                    //cfp_moveMotor(1, power, 0x20);
-                    //Need to debug to determine left/right motor
                 }
                 else {
-                    Toast.makeText(getView().getContext(), "Left Drive Up", Toast.LENGTH_SHORT).show();
                     cfp_moveMotor(0, power, 0x00);
-                    //cfp_moveMotor(1, power, 0x00);
                 }
                 break;
             case R.id.btn_rightDrive:
                 if(theMotion.getAction() == MotionEvent.ACTION_DOWN) {
-                    Toast.makeText(getView().getContext(), "Right Drive Down", Toast.LENGTH_SHORT).show();
-                    //cfp_moveMotor(0, power, 0x20);
                     cfp_moveMotor(1, power, 0x20);
                 }
                 else {
-                    Toast.makeText(getView().getContext(), "Right Drive Up", Toast.LENGTH_SHORT).show();
-                    //cfp_moveMotor(0, power, 0x20);
                     cfp_moveMotor(1, power, 0x00);
                 }
                 break;
@@ -128,27 +137,41 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
 
     //Move motor method
     //Sends bluetooth package to move the motors
-    private byte[] cfp_moveMotor(int motor,int speed, int state) {
-        byte[] buffer = new byte[15];
+    private void cfp_moveMotor(int motor,int speed, int state) {
+        try {
+            byte[] buffer = new byte[15];
 
-        buffer[0] = (byte) (15-2);			//length lsb
-        buffer[1] = 0;						// length msb
-        buffer[2] =  0;						// direct command (with response)
-        buffer[3] = 0x04;					// set output state
-        buffer[4] = (byte) motor;			// output 1 (motor B)
-        buffer[5] = (byte) speed;			// power
-        buffer[6] = 1 + 2;					// motor on + brake between PWM
-        buffer[7] = 0;						// regulation
-        buffer[8] = 0;						// turn ration??
-        buffer[9] = (byte) state; //0x20;					// run state
-        buffer[10] = 0;
-        buffer[11] = 0;
-        buffer[12] = 0;
-        buffer[13] = 0;
-        buffer[14] = 0;
+            buffer[0] = (byte) (15-2);			//length lsb
+            buffer[1] = 0;						// length msb
+            buffer[2] =  0;						// direct command (with response)
+            buffer[3] = 0x04;					// set output state
+            buffer[4] = (byte) motor;			// output 1 (motor B)
+            buffer[5] = (byte) speed;			// power
+            buffer[6] = 1 + 2;					// motor on + brake between PWM
+            buffer[7] = 0;						// regulation
+            buffer[8] = 0;						// turn ration??
+            buffer[9] = (byte) state; //0x20;					// run state
+            buffer[10] = 0;
+            buffer[11] = 0;
+            buffer[12] = 0;
+            buffer[13] = 0;
+            buffer[14] = 0;
 
-        return buffer;
+            os.write(buffer);
+            os.flush();
+        }
+        catch (Exception e) {
+            Toast.makeText(getContext(),"Error in Move Command: " + e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
     }
 
+    public void receiveBTDetails(BluetoothAdapter btAdapter, BluetoothDevice robot,
+                                 BluetoothSocket btSocket, InputStream is, OutputStream os){
+        this.btAdapter = btAdapter;
+        this.robot = robot;
+        this.btSocket = btSocket;
+        this.is = is;
+        this.os = os;
+    }
 
 }
