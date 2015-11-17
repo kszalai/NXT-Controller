@@ -12,14 +12,13 @@ public class PagerAdapter  extends FragmentStatePagerAdapter{
 
     @Override
     public Fragment getItem(int position) {
-
         Fragment fragment = null;
         switch (position){
             case 0:
-                fragment = new ConnectionFragment();
+                fragment = ConnectionFragment.newInstance(position);
                 break;
             case 1:
-                fragment = new DriveFragment();
+                fragment = DriveFragment.newInstance(position);
                 break;
         }
         return fragment;
