@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -92,10 +91,12 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
     public boolean onTouch(View button, MotionEvent theMotion){
         int power = Integer.parseInt(String.valueOf(powerAmount.getText()));
 
+        int action = theMotion.getAction();
+
         switch(button.getId())
         {
             case R.id.btn_upDrive:
-                if(theMotion.getAction() == MotionEvent.ACTION_DOWN) {
+                if(action == MotionEvent.ACTION_DOWN) {
                     cfp_moveMotor(0, power, 0x20);
                     cfp_moveMotor(1, power, 0x20);
                 }
@@ -105,7 +106,7 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
                 }
                 break;
             case R.id.btn_downDrive:
-                if(theMotion.getAction() == MotionEvent.ACTION_DOWN) {
+                if(action == MotionEvent.ACTION_DOWN) {
                     cfp_moveMotor(0, -power, 0x20);
                     cfp_moveMotor(1, -power, 0x20);
                 }
@@ -115,7 +116,7 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
                 }
                 break;
             case R.id.btn_leftDrive:
-                if(theMotion.getAction() == MotionEvent.ACTION_DOWN) {
+                if(action == MotionEvent.ACTION_DOWN) {
                     cfp_moveMotor(0, power, 0x20);
                 }
                 else {
@@ -123,7 +124,7 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
                 }
                 break;
             case R.id.btn_rightDrive:
-                if(theMotion.getAction() == MotionEvent.ACTION_DOWN) {
+                if(action == MotionEvent.ACTION_DOWN) {
                     cfp_moveMotor(1, power, 0x20);
                 }
                 else {

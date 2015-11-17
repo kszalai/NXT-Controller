@@ -57,14 +57,22 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
 
     public void onBackPressed(){
         try {
-            socket.close();
-            is.close();
-            os.close();
-            btAdapter.disable();
-            Toast.makeText(this,"Closing & Shutting Down Bluetooth",Toast.LENGTH_SHORT).show();
+            if (socket != null) {
+                if (socket.isConnected()) {
+                    socket.close();
+                    is.close();
+                    os.close();
+                    btAdapter.disable();
+                }
+            }
+            else{
+                btAdapter = BluetoothAdapter.getDefaultAdapter();
+                btAdapter.disable();
+            }
+            Toast.makeText(this,"Turning Off Bluetooth...",Toast.LENGTH_SHORT).show();
         }
         catch(Exception e){
-            Toast.makeText(this,"Error: Failed to close BluetoothSocket",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Error: Failed to close Bluetooth",Toast.LENGTH_SHORT).show();
         }
         finish();
     }

@@ -93,7 +93,11 @@ public class ConnectionFragment extends Fragment{
                         is.close();
                         os.close();
                         status.setText("Disconnected");
+                        status.setTextColor(getResources().getColor(R.color.black));
                         device.setText("No Device");
+                        device.setTextColor(getResources().getColor(R.color.black));
+                        batteryAmount.setText("0");
+                        batteryLevel.setProgress(0);
                         connectButton.setChecked(false);
                         bluetoothIcon.setImageResource(R.mipmap.bt_icon_black);
                     }
@@ -123,11 +127,14 @@ public class ConnectionFragment extends Fragment{
                     socket.connect();
                     is = socket.getInputStream();
                     os = socket.getOutputStream();
-                    fc.sendBTDeviceDetails(btAdapter,robot,socket,is,os);
+                    getBatteryLevel();
+                    fc.sendBTDeviceDetails(btAdapter, robot,socket,is,os);
                     //Successful Connection
                     bluetoothIcon.setImageResource(R.mipmap.bt_icon_blue);
                     device.setText(robot.getName());
+                    device.setTextColor(getResources().getColor(R.color.colorAccent));
                     status.setText("Connected");
+                    status.setTextColor(getResources().getColor(R.color.colorAccent));
 
                 } catch (Exception e) {
                     //Connection failed
@@ -143,27 +150,29 @@ public class ConnectionFragment extends Fragment{
     }
 
     //Gets battery level from robot
-    private void batteryLevel(){
+    private void getBatteryLevel(){
         try{
-            byte [] buffer = new byte[15];
+            byte [] buffer = new byte[4];
 
-            buffer[0] = (byte) (15-2);
-            buffer[1] = 0;
-            buffer[2] = 0;
-            buffer[3] = 0x0B;   //gets battery level
-            buffer[4] = 0;
-            buffer[5] = 0;
-            buffer[6] = 0;
-            buffer[7] = 0;
-            buffer[8] = 0;
-            buffer[9] = 0;
-            buffer[10] = 0;
-            buffer[11] = 0;
-            buffer[12] = 0;
-            buffer[13] = 0;
-            buffer[14] = 0;
+            buffer[0] = (byte) (4-2);  //length lsb
+            buffer[1] = 0;              //length msb
+            buffer[2] = 0;              //direct command (with response)
+            buffer[3] = 0x0B;           //gets battery level
 
-            Log.i("tag","Battery Level " + buffer[3]);
+            os.write(buffer);
+            os.flush();
+            byte[] batteryResponse = new byte[7];
+            for(int i=0;i<batteryResponse.length;i++)
+            {
+                int temp = is.read();
+                batteryResponse[i] = (byte)temp;
+                Log.i("Battery Byte",Byte.toString(batteryResponse[i]));
+            }
+            int value = (batteryResponse[6]*256) + (batteryResponse[5]);
+            double batPercent = (((double)(value))/9000)*100;
+            Log.i("Battery Level",Double.toString(batPercent));
+            batteryLevel.setProgress((int)batPercent);
+            batteryAmount.setText(Integer.toString((int)batPercent));
         }
         catch(Exception e){
 

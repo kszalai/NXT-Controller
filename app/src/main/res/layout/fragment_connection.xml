@@ -5,90 +5,111 @@
     tools:context="roy.NXT_Control.ConnectionFragment"
     android:id="@+id/ConnectionFragment">
 
-    <ToggleButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:width="100dp"
-        android:id="@+id/tbtn_connect"
-        android:background="@drawable/custom_button"
-        android:text="@string/connect_button"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignTop="@+id/bt_icon"
-        android:layout_marginRight="50dp"
-        android:layout_marginEnd="50dp"
-        android:textOff="Connect"
-        android:textOn="Disconnect" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:id="@+id/rl_container"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
-    <ImageView
+        <ToggleButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="100dp"
+            android:id="@+id/tbtn_connect"
+            android:background="@drawable/custom_button"
+            android:text="@string/connect_button"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@+id/bt_icon"
+            android:layout_marginRight="50dp"
+            android:layout_marginEnd="50dp"
+            android:textOff="Connect"
+            android:textOn="Disconnect" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bt_icon"
+            android:src="@mipmap/bt_icon_black"
+            android:scaleX="2"
+            android:scaleY="2"
+            android:paddingBottom="10dp"
+            android:paddingRight="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="50dp"
+            android:layout_marginLeft="25dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/connection_status"
+            android:text="Disconnected"
+            android:layout_below="@+id/bt_icon"
+            android:layout_alignLeft="@+id/bt_icon"
+            android:layout_alignStart="@+id/bt_icon"
+            android:layout_marginTop="15dp"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Device"
+            android:id="@+id/tv_deviceConnected"
+            android:layout_alignTop="@+id/bt_icon"
+            android:layout_toRightOf="@+id/bt_icon"
+            android:layout_toEndOf="@+id/bt_icon"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/batteryLevel"
+            android:id="@+id/tv_batteryLevel"
+            android:layout_below="@+id/connection_status"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="25dp" />
+
+        <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/sb_batteryLevel"
+            android:layout_below="@+id/tv_batteryLevel"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="10dp"
+            android:max="100"
+            android:clickable="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:id="@+id/tv_batteryAmount"
+            android:layout_alignBottom="@+id/tv_batteryLevel"
+            android:layout_toEndOf="@id/tv_batteryLevel"
+            android:layout_marginLeft="5dp" />
+
+    </RelativeLayout>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/bt_icon"
-        android:src="@mipmap/bt_icon_black"
-        android:scaleX="2"
-        android:scaleY="2"
-        android:paddingBottom="10dp"
-        android:paddingRight="5dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/tv_connectBigLabel"
         android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:layout_marginLeft="25dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/connection_status"
-        android:text="Disconnected"
-        android:layout_below="@+id/bt_icon"
-        android:layout_alignLeft="@+id/bt_icon"
-        android:layout_alignStart="@+id/bt_icon"
-        android:layout_marginTop="15dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="No Device"
-        android:id="@+id/tv_deviceConnected"
-        android:layout_alignTop="@+id/bt_icon"
-        android:layout_toRightOf="@+id/bt_icon"
-        android:layout_toEndOf="@+id/bt_icon"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="15dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/batteryLevel"
-        android:id="@+id/tv_batteryLevel"
-        android:layout_below="@+id/connection_status"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="25dp" />
-
-    <SeekBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/sb_batteryLevel"
-        android:layout_below="@+id/tv_batteryLevel"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
-        android:max="100"
-        android:clickable="false" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0"
-        android:id="@+id/tv_batteryAmount"
-        android:layout_alignBottom="@+id/tv_batteryLevel"
-        android:layout_toEndOf="@+id/connection_status"
-        android:layout_marginLeft="5dp" />
-
-    <!-- Replace with @string/connection_status later on -->
+        android:text="@string/connectionBigLabel"
+        android:textColor="@color/black" />
 
 </RelativeLayout>
