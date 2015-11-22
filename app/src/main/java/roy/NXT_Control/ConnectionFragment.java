@@ -3,11 +3,11 @@ package roy.NXT_Control;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,26 +17,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import roy.NXT_Control.BTConnection.BTDialog;
+import roy.NXT_Control.BTConnection.BluetoothChatService;
+import roy.NXT_Control.BTConnection.DeviceListActivity;
 
 public class ConnectionFragment extends Fragment{
 
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_CONNECT_DEVICE = 2;
+
+    public static final int MESSAGE_BATTERY = 1;
+
+    public static final String BATTERY = "battery";
+
+    private BluetoothAdapter btAdapter;
+    private BluetoothChatService BTChatService;
+    private String deviceAddress;
     private ImageView bluetoothIcon;
     private TextView status;
     private TextView device;
     private SeekBar batteryLevel;
     private TextView batteryAmount;
     private ToggleButton connectButton;
-    private BluetoothAdapter btAdapter;
-    private BluetoothDevice robot;
-    private BluetoothSocket socket;
-    static final int PICK_BLUETOOTH_DEVICE = 1;
-
-    private InputStream is = null;
-    private OutputStream os = null;
 
     FragCommunicator fc;
 
@@ -72,8 +73,7 @@ public class ConnectionFragment extends Fragment{
         btAdapter = BluetoothAdapter.getDefaultAdapter();
         if(!btAdapter.isEnabled()){
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-
-            startActivityForResult(intent, 1000);
+            startActivityForResult(intent, REQUEST_ENABLE_BT);
         }
 
         //Connect Device Button
@@ -83,27 +83,19 @@ public class ConnectionFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 //Toggles the Button through on and off
-                if (connectButton.isChecked()) {
-                    Intent lv_deviceConnect = new Intent(getContext(),BTDialog.class);
-                    startActivityForResult(lv_deviceConnect, PICK_BLUETOOTH_DEVICE);
+                if (connectButton.isChecked()) { //Button says Connect
+                    findDevice();
                 }
-                else {
-                    try{
-                        socket.close();
-                        is.close();
-                        os.close();
-                        status.setText("Disconnected");
-                        status.setTextColor(getResources().getColor(R.color.black));
-                        device.setText("No Device");
-                        device.setTextColor(getResources().getColor(R.color.black));
-                        batteryAmount.setText("0");
-                        batteryLevel.setProgress(0);
-                        connectButton.setChecked(false);
-                        bluetoothIcon.setImageResource(R.mipmap.bt_icon_black);
-                    }
-                    catch(Exception e){
-                        Toast.makeText(getContext(),"Error when Disconnecting - " + e.getMessage(),Toast.LENGTH_SHORT).show();
-                    }
+                else { //Button says Disconnect
+                    BTChatService.stop();
+                    status.setText("Disconnected");
+                    status.setTextColor(getResources().getColor(R.color.black));
+                    device.setText("No Device");
+                    device.setTextColor(getResources().getColor(R.color.black));
+                    batteryAmount.setText("0");
+                    batteryLevel.setProgress(0);
+                    connectButton.setChecked(false);
+                    bluetoothIcon.setImageResource(R.mipmap.bt_icon_black);
                 }
             }
         });
@@ -112,70 +104,55 @@ public class ConnectionFragment extends Fragment{
         batteryLevel = (SeekBar)v.findViewById(R.id.sb_batteryLevel);
         batteryAmount = (TextView)v.findViewById(R.id.tv_batteryAmount);
         batteryLevel.setEnabled(false);
+
+        BTChatService = new BluetoothChatService(getContext(),handler);
     }
 
-    //Gets result from selecting a device
+    private void findDevice() {
+        Intent lv_deviceConnect = new Intent(getContext(),DeviceListActivity.class);
+        startActivityForResult(lv_deviceConnect, REQUEST_CONNECT_DEVICE);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == 1) {
-            if(resultCode == Activity.RESULT_OK){
-                //Picked a device to connect to
-                robot = data.getExtras().getParcelable("device");
-                try {
-                    socket = robot.createRfcommSocketToServiceRecord(java.util.UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
-                    socket.connect();
-                    is = socket.getInputStream();
-                    os = socket.getOutputStream();
-                    getBatteryLevel();
-                    fc.sendBTDeviceDetails(btAdapter, robot,socket,is,os);
-                    //Successful Connection
+        switch(requestCode){
+            case REQUEST_ENABLE_BT:
+                if(resultCode == Activity.RESULT_OK){
+                    findDevice();
+                }
+                else{
+                    Toast.makeText(getContext(),"Bluetooth is not available on this device, exiting.",Toast.LENGTH_LONG).show();
+                    getActivity().finish();
+                }
+                break;
+            case REQUEST_CONNECT_DEVICE:
+                if(resultCode == Activity.RESULT_OK){
+                    String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
+                    BluetoothDevice device = btAdapter.getRemoteDevice(address);
+                    deviceAddress = address;
+                    BTChatService.connect(device);
+                    fc.sendBTChatService(BTChatService);
+
+                    //Device is connected
                     bluetoothIcon.setImageResource(R.mipmap.bt_icon_blue);
-                    device.setText(robot.getName());
-                    device.setTextColor(getResources().getColor(R.color.colorAccent));
+                    this.device.setText(device.getName());
+                    this.device.setTextColor(getResources().getColor(R.color.colorAccent));
                     status.setText("Connected");
                     status.setTextColor(getResources().getColor(R.color.colorAccent));
-
-                } catch (Exception e) {
-                    //Connection failed
-                    Toast.makeText(getContext(), "Error: Failed to connect to " + robot.getName(), Toast.LENGTH_SHORT).show();
-                    connectButton.setChecked(false); //Reset button to connect
                 }
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //User decided to cancel
-                connectButton.setChecked(false);
-            }
+                break;
         }
     }
 
-    //Gets battery level from robot
-    private void getBatteryLevel(){
-        try{
-            byte [] buffer = new byte[4];
-
-            buffer[0] = (byte) (4-2);  //length lsb
-            buffer[1] = 0;              //length msb
-            buffer[2] = 0;              //direct command (with response)
-            buffer[3] = 0x0B;           //gets battery level
-
-            os.write(buffer);
-            os.flush();
-            byte[] batteryResponse = new byte[7];
-            for(int i=0;i<batteryResponse.length;i++)
-            {
-                int temp = is.read();
-                batteryResponse[i] = (byte)temp;
-                Log.i("Battery Byte",Byte.toString(batteryResponse[i]));
+    private final Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            switch(msg.what){
+                case ConnectionFragment.MESSAGE_BATTERY:
+                    msg.getData().getInt(BATTERY);
+                    break;
             }
-            int value = (batteryResponse[6]*256) + (batteryResponse[5]);
-            double batPercent = (((double)(value))/9000)*100;
-            Log.i("Battery Level",Double.toString(batPercent));
-            batteryLevel.setProgress((int)batPercent);
-            batteryAmount.setText(Integer.toString((int)batPercent));
         }
-        catch(Exception e){
-
-        }
-    }
+    };
 }

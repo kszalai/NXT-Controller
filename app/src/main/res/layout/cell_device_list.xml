@@ -5,7 +5,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="65dp">
+        android:layout_height="50dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -16,17 +16,9 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:textColor="@color/black"
-            android:textSize="25dp"
+            android:textSize="18dp"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="5dp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00:00:00:00:00"
-            android:id="@+id/tv_macAddress"
-            android:layout_below="@+id/tv_deviceName"
-            android:layout_alignLeft="@+id/tv_deviceName"
-            android:layout_alignStart="@+id/tv_deviceName" />
     </RelativeLayout>
 </LinearLayout>

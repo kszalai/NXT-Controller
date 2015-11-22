@@ -18,8 +18,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="roy.NXT_Control.BTConnection.BTDialog"
-            android:label="@string/btConnectDialog"
+            android:name=".BTConnection.DeviceListActivity"
             android:theme="@style/AppTheme.Dialog">
         </activity>
     </application>

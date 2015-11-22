@@ -1,8 +1,5 @@
 package roy.NXT_Control;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,12 +9,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import roy.NXT_Control.BTConnection.BluetoothChatService;
 
-public class DriveFragment extends Fragment implements View.OnTouchListener{
+public class DriveFragment extends Fragment{
 
     ImageButton upButton;
     ImageButton downButton;
@@ -27,11 +22,7 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
     TextView powerAmount;
 
     //Bluetooth Stuff Needed
-    BluetoothAdapter btAdapter;
-    BluetoothDevice robot;
-    BluetoothSocket btSocket;
-    InputStream is;
-    OutputStream os;
+    BluetoothChatService BTChatService;
 
     static DriveFragment newInstance(int num) {
         DriveFragment f = new DriveFragment();
@@ -57,13 +48,13 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
 
         //Declare buttons
         upButton = (ImageButton) v.findViewById(R.id.btn_upDrive);
-        upButton.setOnTouchListener(this);
+        upButton.setOnTouchListener(new DirectionOnTouchListener(1,1));
         downButton = (ImageButton) v.findViewById(R.id.btn_downDrive);
-        downButton.setOnTouchListener(this);
+        downButton.setOnTouchListener(new DirectionOnTouchListener(-1,-1));
         leftButton = (ImageButton) v.findViewById(R.id.btn_leftDrive);
-        leftButton.setOnTouchListener(this);
+        leftButton.setOnTouchListener(new DirectionOnTouchListener(-0.6,0.6));
         rightButton = (ImageButton) v.findViewById(R.id.btn_rightDrive);
-        rightButton.setOnTouchListener(this);
+        rightButton.setOnTouchListener(new DirectionOnTouchListener(0.6,-0.6));
         powerControl = (SeekBar) v.findViewById(R.id.sb_powerLevel);
         powerAmount = (TextView) v.findViewById(R.id.tv_poweramount);
 
@@ -86,93 +77,36 @@ public class DriveFragment extends Fragment implements View.OnTouchListener{
         });
     }
 
-    //Method is to contain bluetooth movement methods
-    @Override
-    public boolean onTouch(View button, MotionEvent theMotion){
-        int power = Integer.parseInt(String.valueOf(powerAmount.getText()));
+    //For Directional Drive Buttons
+    private class DirectionOnTouchListener implements View.OnTouchListener {
 
-        int action = theMotion.getAction();
+        private double lmod;
+        private double rmod;
 
-        switch(button.getId())
-        {
-            case R.id.btn_upDrive:
-                if(action == MotionEvent.ACTION_DOWN) {
-                    cfp_moveMotor(0, power, 0x20);
-                    cfp_moveMotor(1, power, 0x20);
-                }
-                else {
-                    cfp_moveMotor(0, power, 0x00);
-                    cfp_moveMotor(1, power, 0x00);
-                }
-                break;
-            case R.id.btn_downDrive:
-                if(action == MotionEvent.ACTION_DOWN) {
-                    cfp_moveMotor(0, -power, 0x20);
-                    cfp_moveMotor(1, -power, 0x20);
-                }
-                else {
-                    cfp_moveMotor(0, -power, 0x00);
-                    cfp_moveMotor(1, -power, 0x00);
-                }
-                break;
-            case R.id.btn_leftDrive:
-                if(action == MotionEvent.ACTION_DOWN) {
-                    cfp_moveMotor(0, power, 0x20);
-                }
-                else {
-                    cfp_moveMotor(0, power, 0x00);
-                }
-                break;
-            case R.id.btn_rightDrive:
-                if(action == MotionEvent.ACTION_DOWN) {
-                    cfp_moveMotor(1, power, 0x20);
-                }
-                else {
-                    cfp_moveMotor(1, power, 0x00);
-                }
-                break;
+        public DirectionOnTouchListener(double l, double r) {
+            lmod = l;
+            rmod = r;
         }
 
-        return true;
-    }
-
-    //Move motor method
-    //Sends bluetooth package to move the motors
-    private void cfp_moveMotor(int motor,int speed, int state) {
-        try {
-            byte[] buffer = new byte[15];
-
-            buffer[0] = (byte) (15-2);			//length lsb
-            buffer[1] = 0;						// length msb
-            buffer[2] =  0;						// direct command (with response)
-            buffer[3] = 0x04;					// set output state
-            buffer[4] = (byte) motor;			// output 1 (motor B)
-            buffer[5] = (byte) speed;			// power
-            buffer[6] = 1 + 2;					// motor on + brake between PWM
-            buffer[7] = 0;						// regulation
-            buffer[8] = 0;						// turn ration??
-            buffer[9] = (byte) state; //0x20;					// run state
-            buffer[10] = 0;
-            buffer[11] = 0;
-            buffer[12] = 0;
-            buffer[13] = 0;
-            buffer[14] = 0;
-
-            os.write(buffer);
-            os.flush();
-        }
-        catch (Exception e) {
-            Toast.makeText(getContext(),"Error in Move Command: " + e.getMessage(),Toast.LENGTH_SHORT).show();
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            //Log.i("NXT", "onTouch event: " + Integer.toString(event.getAction()));
+            int action = event.getAction();
+            //if ((action == MotionEvent.ACTION_DOWN) || (action == MotionEvent.ACTION_MOVE)) {
+            if (action == MotionEvent.ACTION_DOWN) {
+                byte power = (byte) powerControl.getProgress();
+                byte l = (byte) (power*lmod);
+                byte r = (byte) (power*rmod);
+                BTChatService.motors(l, r, false, false);
+            } else if ((action == MotionEvent.ACTION_UP) || (action == MotionEvent.ACTION_CANCEL)) {
+                BTChatService.motors((byte) 0, (byte) 0, false, false);
+            }
+            return true;
         }
     }
 
-    public void receiveBTDetails(BluetoothAdapter btAdapter, BluetoothDevice robot,
-                                 BluetoothSocket btSocket, InputStream is, OutputStream os){
-        this.btAdapter = btAdapter;
-        this.robot = robot;
-        this.btSocket = btSocket;
-        this.is = is;
-        this.os = os;
+    public void receiveBTchat(BluetoothChatService chatService){
+        BTChatService = chatService;
     }
 
 }
