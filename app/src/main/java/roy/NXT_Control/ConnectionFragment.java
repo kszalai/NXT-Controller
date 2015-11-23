@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import roy.NXT_Control.BTConnection.BluetoothChatService;
 import roy.NXT_Control.BTConnection.DeviceListActivity;
@@ -38,6 +42,7 @@ public class ConnectionFragment extends Fragment{
     private SeekBar batteryLevel;
     private TextView batteryAmount;
     private ToggleButton connectButton;
+    private Timer batteryTimer;
 
     FragCommunicator fc;
 
@@ -65,6 +70,8 @@ public class ConnectionFragment extends Fragment{
 
         fc = (FragCommunicator)getActivity();
 
+        BTChatService = new BluetoothChatService(getContext(),mHandler);
+
         bluetoothIcon = (ImageView) v.findViewById(R.id.bt_icon);
 
         status = (TextView) v.findViewById(R.id.connection_status);
@@ -87,15 +94,7 @@ public class ConnectionFragment extends Fragment{
                     findDevice();
                 }
                 else { //Button says Disconnect
-                    BTChatService.stop();
-                    status.setText("Disconnected");
-                    status.setTextColor(getResources().getColor(R.color.black));
-                    device.setText("No Device");
-                    device.setTextColor(getResources().getColor(R.color.black));
-                    batteryAmount.setText("0");
-                    batteryLevel.setProgress(0);
-                    connectButton.setChecked(false);
-                    bluetoothIcon.setImageResource(R.mipmap.bt_icon_black);
+                    disconnectDevice();
                 }
             }
         });
@@ -105,7 +104,23 @@ public class ConnectionFragment extends Fragment{
         batteryAmount = (TextView)v.findViewById(R.id.tv_batteryAmount);
         batteryLevel.setEnabled(false);
 
-        BTChatService = new BluetoothChatService(getContext(),handler);
+        batteryTimer = new Timer();
+    }
+
+    private void disconnectDevice() {
+        if(batteryTimer!=null) {
+            batteryTimer.cancel();
+            batteryTimer = new Timer();
+        }
+        BTChatService.stop();
+        status.setText("Disconnected");
+        status.setTextColor(getResources().getColor(R.color.black));
+        device.setText("No Device");
+        device.setTextColor(getResources().getColor(R.color.black));
+        batteryAmount.setText("0");
+        batteryLevel.setProgress(0);
+        connectButton.setChecked(false);
+        bluetoothIcon.setImageResource(R.mipmap.bt_icon_black);
     }
 
     private void findDevice() {
@@ -116,18 +131,18 @@ public class ConnectionFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        switch(requestCode){
+        switch (requestCode) {
             case REQUEST_ENABLE_BT:
-                if(resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
+                    connectButton.setChecked(true);
                     findDevice();
-                }
-                else{
-                    Toast.makeText(getContext(),"Bluetooth is not available on this device, exiting.",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "Bluetooth is not available on this device, exiting.", Toast.LENGTH_LONG).show();
                     getActivity().finish();
                 }
                 break;
             case REQUEST_CONNECT_DEVICE:
-                if(resultCode == Activity.RESULT_OK){
+                if (resultCode == Activity.RESULT_OK) {
                     String address = data.getExtras().getString(DeviceListActivity.EXTRA_DEVICE_ADDRESS);
                     BluetoothDevice device = btAdapter.getRemoteDevice(address);
                     deviceAddress = address;
@@ -140,18 +155,55 @@ public class ConnectionFragment extends Fragment{
                     this.device.setTextColor(getResources().getColor(R.color.colorAccent));
                     status.setText("Connected");
                     status.setTextColor(getResources().getColor(R.color.colorAccent));
+                    Runnable checkConnected = new Runnable() {
+                        @Override
+                        public void run() {
+                            isConnectedRunning();
+                        }
+                    };
+                    Thread checkConnectedThread = new Thread(checkConnected);
+                    checkConnectedThread.start();
+                }
+                else{//User didn't connect a device
+                    connectButton.setChecked(false);
+                    disconnectDevice();
                 }
                 break;
         }
     }
 
-    private final Handler handler = new Handler(){
+    private void isConnectedRunning(){
+        while(BTChatService.getState()!=BTChatService.STATE_CONNECTED){
+            //Waiting for thread to start, do nothing
+        }
+        TimerTask getBatteryLevel = new TimerTask() {
+            @Override
+            public void run() {
+                BTChatService.getBatteryLevel();
+            }
+        };
+        batteryTimer.schedule(getBatteryLevel,0,10000*60);
+    }
+
+    private final Handler mHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg){
+        public void handleMessage(Message msg) {
             switch(msg.what){
-                case ConnectionFragment.MESSAGE_BATTERY:
-                    msg.getData().getInt(BATTERY);
+                case Constants.MESSAGE_READ:
+                    byte[] buffer = (byte[])msg.obj;
+                    if(buffer[3]==(byte)11) {
+                        int value = (buffer[6] * 256) + (buffer[5]);
+                        double batPercent = (((double) (value)) / 9000) * 100;
+                        Log.i("Battery Level", Double.toString(batPercent));
+                        batteryLevel.setProgress((int) batPercent);
+                        batteryAmount.setText(Integer.toString((int) batPercent));
+                    }
                     break;
+                /*case Constants.MESSAGE_STATE_CHANGE:
+                    if(BTChatService.getState()==BTChatService.STATE_NONE){
+                        disconnectDevice();
+                    }
+                    break;*/ //TODO Code here infinitely spits out log messages? Need to debug
             }
         }
     };

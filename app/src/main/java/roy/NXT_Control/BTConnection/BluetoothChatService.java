@@ -187,11 +187,6 @@ public class BluetoothChatService {
         data[3] = 0x0B;           //gets battery level
 
         write(data);
-        if(handler!=null){
-            Message msg = handler.obtainMessage(ConnectionFragment.MESSAGE_BATTERY);
-            msg.getData().getByteArray("battery");
-
-        }
     }
 
     private void write(byte[] out) {
@@ -290,7 +285,8 @@ public class BluetoothChatService {
                     bytes = is.read(buffer);
 
                     // Send the obtained bytes to the UI Activity
-                    handler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    if(buffer[3]==(byte)11)//for Battery Level
+                        handler.obtainMessage(Constants.MESSAGE_READ, bytes, -1, buffer).sendToTarget();
                 } catch (IOException e) {
                     e.printStackTrace();
                     connectionLost();
