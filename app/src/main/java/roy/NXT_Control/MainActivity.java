@@ -13,6 +13,8 @@ import android.widget.Toast;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import roy.NXT_Control.BTConnection.BluetoothChatService;
+
 public class  MainActivity extends AppCompatActivity implements FragCommunicator {
     ViewPager pager;
     TabLayout tabLayout;
@@ -42,17 +44,12 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
     }
 
 
-    public void sendBTDeviceDetails(BluetoothAdapter btAdapter, BluetoothDevice robot,
-                                    BluetoothSocket btSocket, InputStream is, OutputStream os){
-        //Intercept Bluetooth Stuff
-        socket = btSocket;
-        this.btAdapter = btAdapter;
-        this.is = is;
-        this.os = os;
+    public void sendBTChatService(BluetoothChatService chatService){
+        //Intercept BluetoothChatService
 
         //Pass Bluetooth Stuff to DriveFragment
         DriveFragment driveFrag = (DriveFragment)manager.getFragments().get(1);
-        driveFrag.receiveBTDetails(btAdapter, robot, btSocket, is, os);
+        driveFrag.receiveBTchat(chatService);
     }
 
     public void onBackPressed(){
