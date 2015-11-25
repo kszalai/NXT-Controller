@@ -117,7 +117,7 @@ public class ConnectionFragment extends Fragment{
         status.setTextColor(getResources().getColor(R.color.black));
         device.setText("No Device");
         device.setTextColor(getResources().getColor(R.color.black));
-        batteryAmount.setText("0");
+        batteryAmount.setText("0%");
         batteryLevel.setProgress(0);
         connectButton.setChecked(false);
         bluetoothIcon.setImageResource(R.mipmap.bt_icon_black);
@@ -150,11 +150,7 @@ public class ConnectionFragment extends Fragment{
                     fc.sendBTChatService(BTChatService);
 
                     //Device is connected
-                    bluetoothIcon.setImageResource(R.mipmap.bt_icon_blue);
-                    this.device.setText(device.getName());
-                    this.device.setTextColor(getResources().getColor(R.color.colorAccent));
-                    status.setText("Connected");
-                    status.setTextColor(getResources().getColor(R.color.colorAccent));
+                    //Wait for ConnectedThread to start
                     Runnable checkConnected = new Runnable() {
                         @Override
                         public void run() {
@@ -163,6 +159,9 @@ public class ConnectionFragment extends Fragment{
                     };
                     Thread checkConnectedThread = new Thread(checkConnected);
                     checkConnectedThread.start();
+                    //One ConnectedThread is started and information is obtained, display connected
+                    bluetoothIcon.setImageResource(R.mipmap.bt_icon_blue);
+                    this.device.setText(device.getName());
                 }
                 else{//User didn't connect a device
                     connectButton.setChecked(false);
@@ -196,14 +195,30 @@ public class ConnectionFragment extends Fragment{
                         double batPercent = (((double) (value)) / 9000) * 100;
                         Log.i("Battery Level", Double.toString(batPercent));
                         batteryLevel.setProgress((int) batPercent);
-                        batteryAmount.setText(Integer.toString((int) batPercent));
+                        batteryAmount.setText(Integer.toString((int) batPercent) + "%");
                     }
                     break;
-                /*case Constants.MESSAGE_STATE_CHANGE:
+                case Constants.MESSAGE_STATE_CHANGE:
                     if(BTChatService.getState()==BTChatService.STATE_NONE){
-                        disconnectDevice();
+                        Toast.makeText(getContext(), device.getText() + " has been disconnected!", Toast.LENGTH_SHORT).show();
+                        status.setText("Disconnected");
+                        status.setTextColor(getResources().getColor(R.color.black));
+                        device.setText("No Device");
+                        device.setTextColor(getResources().getColor(R.color.black));
+                        batteryAmount.setText("0%");
+                        batteryLevel.setProgress(0);
+                        connectButton.setChecked(false);
+                        bluetoothIcon.setImageResource(R.mipmap.bt_icon_black);
                     }
-                    break;*/ //TODO Code here infinitely spits out log messages? Need to debug
+                    if(BTChatService.getState()==BTChatService.STATE_CONNECTING){
+                        status.setText("Connecting...");
+                    }
+                    else if(BTChatService.getState()==BTChatService.STATE_CONNECTED){
+                        status.setText("Connected");
+                        status.setTextColor(getResources().getColor(R.color.colorAccent));
+                        device.setTextColor(getResources().getColor(R.color.colorAccent));
+                    }
+                    break;
             }
         }
     };
