@@ -17,4 +17,8 @@
     <!-- Main Menu -->
     <string name="action_preferences">Preferences</string>
     <string name="action_drive_mode">Drive Mode</string>
+
+    <!-- TiltDriveFragment -->
+    <string name="instructions">Tilt your device in the corresponding\n direction to move the robot</string>
+    <string name="tiltPowerLabel">Power</string>
 </resources>

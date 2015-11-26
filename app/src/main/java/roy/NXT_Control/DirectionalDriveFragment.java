@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import roy.NXT_Control.BTConnection.BluetoothChatService;
 
-public class DriveFragment extends Fragment{
+public class DirectionalDriveFragment extends Fragment{
 
     ImageButton upButton;
     ImageButton downButton;
@@ -24,8 +24,8 @@ public class DriveFragment extends Fragment{
     //Bluetooth Stuff Needed
     BluetoothChatService BTChatService;
 
-    static DriveFragment newInstance(int num) {
-        DriveFragment f = new DriveFragment();
+    static DirectionalDriveFragment newInstance(int num) {
+        DirectionalDriveFragment f = new DirectionalDriveFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
@@ -37,7 +37,7 @@ public class DriveFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
-        return inflater.inflate(R.layout.fragment_drive,container,false);
+        return inflater.inflate(R.layout.fragment_directional_drive,container,false);
     }
 
     @Override

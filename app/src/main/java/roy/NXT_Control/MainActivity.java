@@ -1,7 +1,6 @@
 package roy.NXT_Control;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -58,8 +57,8 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
     public void sendBTChatService(BluetoothChatService chatService){
         //Intercept BluetoothChatService
 
-        //Pass Bluetooth Stuff to DriveFragment
-        DriveFragment driveFrag = (DriveFragment)manager.getFragments().get(1);
+        //Pass Bluetooth Stuff to DirectionalDriveFragment
+        DirectionalDriveFragment driveFrag = (DirectionalDriveFragment)manager.getFragments().get(1);
         driveFrag.receiveBTchat(chatService);
     }
 
