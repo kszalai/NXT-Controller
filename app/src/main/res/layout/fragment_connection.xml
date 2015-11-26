@@ -93,23 +93,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
+            android:text="0%"
             android:id="@+id/tv_batteryAmount"
             android:layout_alignBottom="@+id/tv_batteryLevel"
             android:layout_toEndOf="@id/tv_batteryLevel"
             android:layout_marginLeft="5dp" />
 
     </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/tv_connectBigLabel"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:text="@string/connectionBigLabel"
-        android:textColor="@color/black" />
 
 </RelativeLayout>
