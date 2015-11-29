@@ -21,7 +21,6 @@ public class TiltDriveFragment extends Fragment implements SensorEventListener {
 
     private TextView powerLevel;
     private SensorManager mSensorManager;
-    private Sensor mSensor;
     private Button swapToDirectional;
     private RelativeLayout tiltFrag;
 
@@ -73,26 +72,69 @@ public class TiltDriveFragment extends Fragment implements SensorEventListener {
 
         //Setup SensorManager and Gyroscope Sensor
         mSensorManager = (SensorManager)getActivity().getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        //if sensor is unreliable, return void
-        if (event.accuracy == SensorManager.SENSOR_STATUS_UNRELIABLE)
-        {
-            return;
-        }
+        synchronized (this){
+            //event.values[0] - x
+            //event.values[1] - y
 
-        //else it will output the Roll, Pitch and Yawn values
-        powerLevel.setText("Orientation X (Roll) :"+ Float.toString(event.values[2]) +"\n"+
-                "Orientation Y (Pitch) :"+ Float.toString(event.values[1]) +"\n"+
-                "Orientation Z (Yaw) :"+ Float.toString(event.values[0]));
+            float x = event.values[0];
+            float y = event.values[1];
+
+            if(Math.abs(x) > 0.25 && Math.abs(y) > 0.25) {
+                float sqrt22 = 0.707106781f;
+                float nx = x * sqrt22 + y * sqrt22;
+                float ny = -x * sqrt22 + y * sqrt22;
+                float power = (float) Math.sqrt(nx * nx + ny * ny);
+                if (power > 1.0f) {
+                    nx /= power;
+                    ny /= power;
+                    power = 1.0f;
+                }
+                float angle = (float) Math.atan2(y, x);
+                float l, r;
+                if (angle > 0f && angle <= Math.PI / 2f) {
+                    l = 1.0f;
+                    r = (float) (2.0f * angle / Math.PI);
+                } else if (angle > Math.PI / 2f && angle <= Math.PI) {
+                    l = (float) (2.0f * (Math.PI - angle) / Math.PI);
+                    r = 1.0f;
+                } else if (angle < 0f && angle >= -Math.PI / 2f) {
+                    l = -1.0f;
+                    r = (float) (2.0f * angle / Math.PI);
+                } else if (angle < -Math.PI / 2f && angle > -Math.PI) {
+                    l = (float) (-2.0f * (angle + Math.PI) / Math.PI);
+                    r = -1.0f;
+                } else {
+                    l = r = 0f;
+                }
+                l *= power;
+                r *= power;
+                BTChatService.motors((byte) (100 * l), (byte) (100 * r), false, false);
+            }
+            else{
+                BTChatService.motors((byte) 0, (byte) 0, false, false);
+            }
+        }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         //Do nothing
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), mSensorManager.SENSOR_DELAY_GAME);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mSensorManager.unregisterListener(this,mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER));
     }
 
     public void receiveBTchat(BluetoothChatService chatService){
