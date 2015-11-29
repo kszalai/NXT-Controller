@@ -1,93 +1,100 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DirectionalDriveFragment"
-    android:id="@+id/driveFrag">
-
-    <SeekBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/sb_powerLevel"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="25dp"
-        android:progress="75"
-        android:max="100" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Power"
-        android:id="@+id/tv_powerlabel"
-        android:layout_above="@+id/sb_powerLevel"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textSize="20dp"
-        android:layout_marginLeft="15dp" />
+    android:id="@+id/root_frame">
 
     <RelativeLayout
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/rl_driveButtons">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".DirectionalDriveFragment"
+        android:id="@+id/driveFrag">
 
-        <ImageButton
-            android:layout_width="wrap_content"
+        <SeekBar
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_upDrive"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_keyboard_arrow_up_black_24dp" />
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_leftDrive"
-            android:layout_centerVertical="true"
+            android:id="@+id/sb_powerLevel"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:src="@drawable/ic_keyboard_arrow_left_black_24dp" />
+            android:layout_marginBottom="25dp"
+            android:progress="75"
+            android:max="100" />
 
-        <ImageButton
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_rightDrive"
+            android:text="Power"
+            android:id="@+id/tv_powerlabel"
+            android:layout_above="@+id/sb_powerLevel"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="20dp"
+            android:layout_marginLeft="15dp" />
+
+        <RelativeLayout
+            android:layout_width="200dp"
+            android:layout_height="200dp"
             android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/rl_driveButtons">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_upDrive"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_keyboard_arrow_up_black_24dp" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_leftDrive"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_keyboard_arrow_left_black_24dp" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_rightDrive"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_downDrive"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="75"
+            android:id="@+id/tv_poweramount"
+            android:layout_above="@+id/sb_powerLevel"
+            android:layout_toRightOf="@+id/tv_powerlabel"
+            android:layout_toEndOf="@+id/tv_powerlabel"
+            android:textSize="20dp"
+            android:layout_marginLeft="10dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/swaptotilt"
+            android:id="@+id/btn_toTilt"
+            android:layout_above="@+id/tv_poweramount"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:src="@drawable/ic_keyboard_arrow_right_black_24dp" />
+            android:layout_margin="10dp" />
 
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btn_downDrive"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
     </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="75"
-        android:id="@+id/tv_poweramount"
-        android:layout_above="@+id/sb_powerLevel"
-        android:layout_toRightOf="@+id/tv_powerlabel"
-        android:layout_toEndOf="@+id/tv_powerlabel"
-        android:textSize="20dp"
-        android:layout_marginLeft="10dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/swaptotilt"
-        android:id="@+id/btn_toTilt"
-        android:layout_above="@+id/tv_poweramount"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="10dp" />
-
-</RelativeLayout>
+</FrameLayout>

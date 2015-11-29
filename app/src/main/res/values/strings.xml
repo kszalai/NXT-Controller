@@ -16,7 +16,7 @@
 
     <!-- Main Menu -->
     <string name="action_preferences">Preferences</string>
-    <string name="action_drive_mode">Drive Mode</string>
+    <string name="action_about">About App</string>
 
     <!-- DirectionalDriveFragment -->
     <string name="swaptotilt">Tilt Drive Mode</string>
