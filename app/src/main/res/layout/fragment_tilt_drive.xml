@@ -71,4 +71,14 @@
         android:layout_alignBottom="@+id/tv_tiltPowerLabel"
         android:layout_toRightOf="@+id/tv_tiltPowerLabel"
         android:layout_toEndOf="@+id/tv_tiltPowerLabel" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/swaptodirectional"
+        android:id="@+id/btn_toDirectional"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp" />
 </RelativeLayout>

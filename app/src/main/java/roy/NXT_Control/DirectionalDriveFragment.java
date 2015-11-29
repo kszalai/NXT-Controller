@@ -1,11 +1,13 @@
 package roy.NXT_Control;
 
+import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -18,6 +20,7 @@ public class DirectionalDriveFragment extends Fragment{
     ImageButton downButton;
     ImageButton leftButton;
     ImageButton rightButton;
+    Button swapToTilt;
     SeekBar powerControl;
     TextView powerAmount;
 
@@ -57,6 +60,19 @@ public class DirectionalDriveFragment extends Fragment{
         rightButton.setOnTouchListener(new DirectionOnTouchListener(0.6,-0.6));
         powerControl = (SeekBar) v.findViewById(R.id.sb_powerLevel);
         powerAmount = (TextView) v.findViewById(R.id.tv_poweramount);
+
+        //Swap to Tilt Driving
+        swapToTilt = (Button)v.findViewById(R.id.btn_toTilt);
+        swapToTilt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.driveFrag,new TiltDriveFragment());
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
 
         //Set Power Level Change Listener
         powerControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
