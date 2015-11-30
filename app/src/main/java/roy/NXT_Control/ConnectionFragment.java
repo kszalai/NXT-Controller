@@ -200,7 +200,7 @@ public class ConnectionFragment extends Fragment{
                     break;
                 case Constants.MESSAGE_STATE_CHANGE:
                     if(BTChatService.getState()==BTChatService.STATE_NONE){
-                        Toast.makeText(getContext(), device.getText() + " has been disconnected!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Disconnected!", Toast.LENGTH_SHORT).show();
                         status.setText("Disconnected");
                         status.setTextColor(getResources().getColor(R.color.black));
                         device.setText("No Device");

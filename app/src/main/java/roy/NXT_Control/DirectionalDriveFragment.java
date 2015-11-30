@@ -1,31 +1,36 @@
 package roy.NXT_Control;
 
+import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import roy.NXT_Control.BTConnection.BluetoothChatService;
 
-public class DriveFragment extends Fragment{
+public class DirectionalDriveFragment extends Fragment{
 
     ImageButton upButton;
     ImageButton downButton;
     ImageButton leftButton;
     ImageButton rightButton;
+    Button swapToTilt;
     SeekBar powerControl;
     TextView powerAmount;
+    RelativeLayout driveFrag;
 
     //Bluetooth Stuff Needed
     BluetoothChatService BTChatService;
 
-    static DriveFragment newInstance(int num) {
-        DriveFragment f = new DriveFragment();
+    static DirectionalDriveFragment newInstance(int num) {
+        DirectionalDriveFragment f = new DirectionalDriveFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
@@ -37,7 +42,7 @@ public class DriveFragment extends Fragment{
 
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState){
-        return inflater.inflate(R.layout.fragment_drive,container,false);
+        return inflater.inflate(R.layout.fragment_directional_drive,container,false);
     }
 
     @Override
@@ -57,6 +62,23 @@ public class DriveFragment extends Fragment{
         rightButton.setOnTouchListener(new DirectionOnTouchListener(0.6,-0.6));
         powerControl = (SeekBar) v.findViewById(R.id.sb_powerLevel);
         powerAmount = (TextView) v.findViewById(R.id.tv_poweramount);
+        driveFrag = (RelativeLayout)v.findViewById(R.id.driveFrag);
+
+        //Swap to Tilt Driving
+        swapToTilt = (Button)v.findViewById(R.id.btn_toTilt);
+        swapToTilt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                TiltDriveFragment tiltDrive = new TiltDriveFragment();
+                tiltDrive.receiveBTchat(BTChatService);
+                driveFrag.setVisibility(View.INVISIBLE);
+                ft.replace(R.id.root_frame,tiltDrive);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
 
         //Set Power Level Change Listener
         powerControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

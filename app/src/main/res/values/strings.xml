@@ -16,5 +16,13 @@
 
     <!-- Main Menu -->
     <string name="action_preferences">Preferences</string>
-    <string name="action_drive_mode">Drive Mode</string>
+    <string name="action_about">About App</string>
+
+    <!-- DirectionalDriveFragment -->
+    <string name="swaptotilt">Tilt Drive Mode</string>
+
+    <!-- TiltDriveFragment -->
+    <string name="instructions">Tilt your device in the corresponding\n direction to move the robot</string>
+    <string name="tiltPowerLabel">Power</string>
+    <string name="swaptodirectional">Directional Drive Mode</string>
 </resources>
