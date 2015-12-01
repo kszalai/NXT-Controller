@@ -18,7 +18,7 @@ public class PagerAdapter  extends FragmentStatePagerAdapter{
                 fragment = ConnectionFragment.newInstance(position);
                 break;
             case 1:
-                fragment = DriveFragment.newInstance(position);
+                fragment = DirectionalDriveFragment.newInstance(position);
                 break;
 
             case 2:
