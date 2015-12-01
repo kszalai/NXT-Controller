@@ -1,12 +1,31 @@
 <resources>
     <string name="app_name">NXT Control</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- ConnectionFragment -->
     <string name="connect_button">Connect</string>
-    <string name="button_scan">Scan</string>
-    <string name="fragment_connect_label">Paired Devices</string>
-    <string name="btConnectDialog">Select a Device</string>
-    <string name="sensorDialog">Select NXT Sensor Type</string>
     <string name="batteryLevel">Battery Level</string>
-    <string name="connectionBigLabel">Lego NXT Mindstorm Controller</string>
+
+    <!-- DeviceListActivity -->
+    <string name="scanning">Scanning for Devices...</string>
+    <string name="select_device">Select a Device to Connect</string>
+    <string name="none_paired">No devices have been paired</string>
+    <string name="none_found">No devices were found</string>
+    <string name="title_paired_devices">Paired Devices</string>
+    <string name="title_other_devices">Other Available Devices</string>
+    <string name="button_scan">Scan for Devices</string>
+
+    <!-- Main Menu -->
+    <string name="action_preferences">Preferences</string>
+    <string name="action_about">About App</string>
+
+    <!-- DirectionalDriveFragment -->
+    <string name="swaptotilt">Tilt Drive Mode</string>
+
+    <!-- TiltDriveFragment -->
+    <string name="instructions">Tilt your device in the corresponding\n direction to move the robot</string>
+    <string name="tiltPowerLabel">Power</string>
+    <string name="swaptodirectional">Directional Drive Mode</string>
+
+    <!-- SensorFragment -->
+    <string name="sensorDialog">Select NXT Sensor Type</string>
 </resources>

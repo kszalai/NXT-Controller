@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name="roy.NXT_Control.MainActivity" >
+        <activity android:name="roy.NXT_Control.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,9 +19,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="roy.NXT_Control.BTConnection.BTDialog"
-            android:label="@string/btConnectDialog"
-            android:theme="@style/AppTheme.Dialog">
+            android:name=".BTConnection.DeviceListActivity"
+            android:theme="@style/AppTheme.Dialog"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name="roy.NXT_Control.SensorDialog"
