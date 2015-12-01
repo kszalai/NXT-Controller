@@ -22,6 +22,11 @@
             android:label="@string/btConnectDialog"
             android:theme="@style/AppTheme.Dialog">
         </activity>
+        <activity
+            android:name="roy.NXT_Control.SensorDialog"
+            android:label="@string/sensorDialog"
+            android:theme="@style/AppTheme.Dialog">
+        </activity>
     </application>
 
 </manifest>

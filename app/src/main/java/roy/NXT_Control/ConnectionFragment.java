@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +40,16 @@ public class ConnectionFragment extends Fragment{
     private OutputStream os = null;
 
     FragCommunicator fc;
+
+    Handler handler = new Handler();
+    Runnable timedTask = new Runnable(){
+
+        @Override
+        public void run() {
+            getBatteryLevel();
+            handler.postDelayed(timedTask, 60000);
+            Log.i("tag", "Battery level was updated");
+        }};
 
     static ConnectionFragment newInstance(int num) {
         ConnectionFragment f = new ConnectionFragment();
