@@ -59,6 +59,7 @@ public class TiltDriveFragment extends Fragment implements SensorEventListener {
         swapToDirectional.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BTChatService.motors((byte) 0, (byte) 0, false, false);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DirectionalDriveFragment directionalDrive = new DirectionalDriveFragment();
                 directionalDrive.receiveBTchat(BTChatService);

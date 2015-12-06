@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import roy.NXT_Control.BTConnection.BluetoothChatService;
 
@@ -69,14 +70,18 @@ public class DirectionalDriveFragment extends Fragment{
         swapToTilt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                TiltDriveFragment tiltDrive = new TiltDriveFragment();
-                tiltDrive.receiveBTchat(BTChatService);
-                driveFrag.setVisibility(View.INVISIBLE);
-                ft.replace(R.id.root_frame,tiltDrive);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.addToBackStack(null);
-                ft.commit();
+                if(BTChatService!=null) {
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    TiltDriveFragment tiltDrive = new TiltDriveFragment();
+                    tiltDrive.receiveBTchat(BTChatService);
+                    driveFrag.setVisibility(View.INVISIBLE);
+                    ft.replace(R.id.root_frame, tiltDrive);
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+                else
+                    Toast.makeText(getContext(),"Connect a device before changing drive modes!",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -114,15 +119,18 @@ public class DirectionalDriveFragment extends Fragment{
         public boolean onTouch(View v, MotionEvent event) {
             //Log.i("NXT", "onTouch event: " + Integer.toString(event.getAction()));
             int action = event.getAction();
-            //if ((action == MotionEvent.ACTION_DOWN) || (action == MotionEvent.ACTION_MOVE)) {
-            if (action == MotionEvent.ACTION_DOWN) {
-                byte power = (byte) powerControl.getProgress();
-                byte l = (byte) (power*lmod);
-                byte r = (byte) (power*rmod);
-                BTChatService.motors(l, r, false, false);
-            } else if ((action == MotionEvent.ACTION_UP) || (action == MotionEvent.ACTION_CANCEL)) {
-                BTChatService.motors((byte) 0, (byte) 0, false, false);
+            if(BTChatService!=null) {
+                if (action == MotionEvent.ACTION_DOWN) {
+                    byte power = (byte) powerControl.getProgress();
+                    byte l = (byte) (power * lmod);
+                    byte r = (byte) (power * rmod);
+                    BTChatService.motors(l, r, false, false);
+                } else if ((action == MotionEvent.ACTION_UP) || (action == MotionEvent.ACTION_CANCEL)) {
+                    BTChatService.motors((byte) 0, (byte) 0, false, false);
+                }
             }
+            else
+                Toast.makeText(getContext(),"Connect a device before trying to drive!",Toast.LENGTH_SHORT).show();
             return true;
         }
     }
