@@ -1,12 +1,8 @@
 package roy.NXT_Control;
 
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ToggleButton;
 
-/**
- * Created by Brandon on 11/20/2015.
- */
 public class SensorListData {
         private String ml_number;
         private Button mv_button;
