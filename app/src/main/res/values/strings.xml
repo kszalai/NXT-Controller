@@ -28,4 +28,14 @@
 
     <!-- SensorFragment -->
     <string name="sensorDialog">Select NXT Sensor Type</string>
+
+    <!-- Preferences -->
+    <string name="pref_battery">Poll battery level every 1 minute</string>
+    <string name="pref_speed">Set default power level for driving to 100 instead of 75</string>
+
+    <!-- Preferences Headers -->
+    <string name="prefsect_polling">Polling Settings</string>
+    <string name="prefsect_polling_summary">How often to poll the different sensors/servos</string>
+    <string name="prefsect_servo">Servo Settings</string>
+    <string name="prefsect_servo_summary">Settings to control default stuff for the servos</string>
 </resources>

@@ -2,6 +2,9 @@ package roy.NXT_Control;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -59,12 +62,21 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
 
         switch(id){
             case R.id.action_preferences:
+                startActivity(new Intent(this,EditPreferences.class));
                 break;
             case R.id.action_about:
                 break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
+        //checkbox.setText(new Boolean(prefs.getBoolean("checkbox", false)).toString());
+        //ringtone.setText(prefs.getString("ringtone", "<unset>"));
     }
 
     public void sendBTChatService(BluetoothChatService chatService){
