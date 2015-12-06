@@ -22,10 +22,7 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
     TabLayout tabLayout;
     FragmentManager manager;
     PagerAdapter adapter;
-    BluetoothAdapter btAdapter;
-    BluetoothSocket socket;
-    InputStream is;
-    OutputStream os;
+    BluetoothChatService BTChatService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +41,7 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
 
         tabLayout.setupWithViewPager(pager);
         pager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        pager.setOffscreenPageLimit(3);
 
         tabLayout.setTabsFromPagerAdapter(adapter);
     }
@@ -71,6 +69,7 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
 
     public void sendBTChatService(BluetoothChatService chatService){
         //Intercept BluetoothChatService
+        BTChatService = chatService;
 
         //Pass Bluetooth Stuff to DirectionalDriveFragment
         DirectionalDriveFragment driveFrag = (DirectionalDriveFragment)manager.getFragments().get(1);
@@ -79,22 +78,15 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
 
     public void onBackPressed(){
         try {
-            if (socket != null) {
-                if (socket.isConnected()) {
-                    socket.close();
-                    is.close();
-                    os.close();
-                    btAdapter.disable();
+            if (BTChatService != null) {
+                if (BTChatService.getState() == BluetoothChatService.STATE_CONNECTED
+                        || BTChatService.getState() == BluetoothChatService.STATE_CONNECTING) {
+                    BTChatService.stop();
                 }
             }
-            else{
-                btAdapter = BluetoothAdapter.getDefaultAdapter();
-                btAdapter.disable();
-            }
-            Toast.makeText(this,"Turning Off Bluetooth...",Toast.LENGTH_SHORT).show();
         }
         catch(Exception e){
-            Toast.makeText(this,"Error: Failed to close Bluetooth",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Error: Failed to close Bluetooth Communications",Toast.LENGTH_SHORT).show();
         }
         finish();
     }

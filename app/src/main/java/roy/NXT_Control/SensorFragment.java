@@ -100,10 +100,11 @@ public class SensorFragment extends Fragment {
         switch(requestCode){
             case REQUEST_NEW_SENSOR:
                 if(resultCode == Activity.RESULT_OK){
+                    //To swap when implemented
                     //String sensor = data.getExtras().getString(SensorDialog.EXTRA_SENSOR);
                     //Toast.makeText(getContext(), sensor, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), "Back was pressed", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), "Back was pressed", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
