@@ -20,13 +20,16 @@ public class PagerAdapter  extends FragmentStatePagerAdapter{
             case 1:
                 fragment = DirectionalDriveFragment.newInstance(position);
                 break;
+            case 2:
+                fragment = SensorFragment.newInstance(position);
+                break;
         }
         return fragment;
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
@@ -38,6 +41,9 @@ public class PagerAdapter  extends FragmentStatePagerAdapter{
                 break;
             case 1:
                 sectionTitle = "Drive";
+                break;
+            case 2:
+                sectionTitle ="Sensors";
                 break;
         }
         return sectionTitle;

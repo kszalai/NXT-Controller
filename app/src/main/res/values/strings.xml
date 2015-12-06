@@ -25,4 +25,7 @@
     <string name="instructions">Tilt your device in the corresponding\n direction to move the robot</string>
     <string name="tiltPowerLabel">Power</string>
     <string name="swaptodirectional">Directional Drive Mode</string>
+
+    <!-- SensorFragment -->
+    <string name="sensorDialog">Select NXT Sensor Type</string>
 </resources>

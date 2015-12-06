@@ -23,6 +23,11 @@
             android:theme="@style/AppTheme.Dialog"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name="roy.NXT_Control.SensorDialog"
+            android:label="@string/sensorDialog"
+            android:theme="@style/AppTheme.Dialog">
+        </activity>
     </application>
 
 </manifest>
