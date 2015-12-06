@@ -1,10 +1,9 @@
 package roy.NXT_Control;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +15,10 @@ import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 
-/**
- * Created by Brandon on 11/20/2015.
- */
 public class SensorFragment extends Fragment {
+
+    private static final int REQUEST_NEW_SENSOR = 1;
+
     FragCommunicator fc;
 
     public static int[] sensorImages = {
@@ -53,6 +52,7 @@ public class SensorFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         View v = getView();
+
         fc = (FragCommunicator) getActivity();
 
         String[] cv_numberArray = {"1", "2", "3", "4", "A", "B", "C"};
@@ -72,29 +72,40 @@ public class SensorFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent sensorIntent;
+                Intent sensorIntent = null;
                 switch (position) {
                     case 0:
                         sensorIntent = new Intent(getContext(), SensorDialog.class);
-                        startActivity(sensorIntent);
                         break;
                     case 1:
                         sensorIntent = new Intent(getContext(), SensorDialog.class);
-                        startActivity(sensorIntent);
                         break;
                     case 2:
                         sensorIntent = new Intent(getContext(), SensorDialog.class);
-                        startActivity(sensorIntent);
                         break;
                     case 3:
                         sensorIntent = new Intent(getContext(), SensorDialog.class);
-                        startActivity(sensorIntent);
                         break;
                     default:
                         break;
                 }
-                Toast.makeText(getContext(), "Clicked item at position " + position, Toast.LENGTH_LONG).show();
+                startActivityForResult(sensorIntent, REQUEST_NEW_SENSOR);
+                //Toast.makeText(getContext(), "Clicked item at position " + position, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch(requestCode){
+            case REQUEST_NEW_SENSOR:
+                if(resultCode == Activity.RESULT_OK){
+                    //String sensor = data.getExtras().getString(SensorDialog.EXTRA_SENSOR);
+                    //Toast.makeText(getContext(), sensor, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Back was pressed", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
     }
 }

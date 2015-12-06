@@ -20,7 +20,6 @@ public class PagerAdapter  extends FragmentStatePagerAdapter{
             case 1:
                 fragment = DirectionalDriveFragment.newInstance(position);
                 break;
-
             case 2:
                 fragment = SensorFragment.newInstance(position);
                 break;
