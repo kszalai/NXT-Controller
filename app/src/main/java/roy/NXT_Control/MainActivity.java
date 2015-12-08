@@ -71,14 +71,6 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        SharedPreferences prefs= PreferenceManager.getDefaultSharedPreferences(this);
-        //checkbox.setText(new Boolean(prefs.getBoolean("checkbox", false)).toString());
-        //ringtone.setText(prefs.getString("ringtone", "<unset>"));
-    }
-
     public void sendBTChatService(BluetoothChatService chatService){
         //Intercept BluetoothChatService
         BTChatService = chatService;

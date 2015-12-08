@@ -1,5 +1,8 @@
 package roy.NXT_Control;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,6 +29,7 @@ public class DirectionalDriveFragment extends Fragment{
     SeekBar powerControl;
     TextView powerAmount;
     RelativeLayout driveFrag;
+    private int defaultSpeed;
 
     //Bluetooth Stuff Needed
     BluetoothChatService BTChatService;
@@ -70,7 +74,7 @@ public class DirectionalDriveFragment extends Fragment{
         swapToTilt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(BTChatService!=null) {
+                if (BTChatService != null) {
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     TiltDriveFragment tiltDrive = new TiltDriveFragment();
                     tiltDrive.receiveBTchat(BTChatService);
@@ -79,9 +83,8 @@ public class DirectionalDriveFragment extends Fragment{
                     ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                     ft.addToBackStack(null);
                     ft.commit();
-                }
-                else
-                    Toast.makeText(getContext(),"Connect a device before changing drive modes!",Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getContext(), "Connect a device before changing drive modes!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -102,6 +105,29 @@ public class DirectionalDriveFragment extends Fragment{
                 //Required but unused
             }
         });
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+        boolean speedDefault = pref.getBoolean("speedCheckBox",false);
+        if(speedDefault){
+            defaultSpeed = 100;
+        } else{
+            defaultSpeed = 75;
+        }
+
+        powerControl.setProgress(defaultSpeed);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+        boolean defaultSpeed = pref.getBoolean("speedCheckBox",false);
+        if(defaultSpeed){
+            powerControl.setProgress(100);
+        }
+        else{
+            powerControl.setProgress(75);
+        }
     }
 
     //For Directional Drive Buttons

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/prefsect_polling"
+        android:summary="@string/prefsect_pollingSummary">
+
+        <CheckBoxPreference
+            android:key="batteryCheckBox"
+            android:title="@string/pref_battery"
+            android:summary="@string/pref_batterySummary"
+            android:defaultValue="false" />
+
+        <ListPreference
+            android:key="timeIntervalListPref"
+            android:title="@string/pref_interval"
+            android:summary="@string/pref_intervalSummary"
+            android:entries="@array/timeIntervalArray"
+            android:entryValues="@array/timeIntervalArrayValues"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/prefsect_servo"
+        android:summary="@string/prefsect_servoSummary">
+
+        <CheckBoxPreference
+            android:key="speedCheckbox"
+            android:title="@string/pref_speed"
+            android:summary="@string/pref_speedSummary"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
