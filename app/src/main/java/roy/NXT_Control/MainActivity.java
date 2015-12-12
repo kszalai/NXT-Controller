@@ -1,9 +1,12 @@
 package roy.NXT_Control;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -59,6 +62,19 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
                 startActivity(intent);
                 break;
             case R.id.action_about:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setIcon(R.mipmap.ic_launcher);
+                builder.setTitle("NXT Control v1.0");
+                builder.setMessage(
+                        "Lego Mindstorm NXT Controller for Android\n" +
+                                "\n" +
+                                "Created by Kyle Szalai, Brandon Beals, & Brianna Wurtsmith\n" +
+                                "for COSC 426 at Eastern Michigan University\n" +
+                                "\n" +
+                                "© Kyle Szalai, Brandon Beals, Brianna Wurtsmith 2015"
+                );
+                builder.create();
+                builder.show();
                 break;
         }
 
