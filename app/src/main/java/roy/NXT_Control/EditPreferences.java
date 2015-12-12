@@ -1,15 +1,9 @@
 package roy.NXT_Control;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-
-import java.util.List;
 
 public class EditPreferences extends PreferenceActivity{
 

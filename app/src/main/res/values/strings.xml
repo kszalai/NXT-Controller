@@ -30,12 +30,12 @@
     <string name="sensorDialog">Select NXT Sensor Type</string>
 
     <!-- Preferences -->
-    <string name="pref_battery">Battery Level</string>
-    <string name="pref_batterySummary">Poll battery level every 1 minute</string>
+    <string name="pref_ports">Ports In Use</string>
+    <string name="pref_portsSummary">Select which 2 ports to use to drive the robot</string>
     <string name="pref_speed">Default Speed</string>
-    <string name="pref_speedSummary">Set default power level for driving to 100 instead of 75</string>
+    <string name="pref_speedSummary">Set default power level for driving</string>
     <string name="pref_interval">Time Interval</string>
-    <string name="pref_intervalSummary">Time between each servo/sensor polling</string>
+    <string name="pref_intervalSummary">Time between each battery information poll</string>
 
     <!-- Preferences Headers -->
     <string name="prefsect_polling">Polling Settings</string>

@@ -1,6 +1,5 @@
 package roy.NXT_Control;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,7 +28,8 @@ public class DirectionalDriveFragment extends Fragment{
     SeekBar powerControl;
     TextView powerAmount;
     RelativeLayout driveFrag;
-    private int defaultSpeed;
+    private byte leftMotor;
+    private byte rightMotor;
 
     //Bluetooth Stuff Needed
     BluetoothChatService BTChatService;
@@ -107,26 +107,45 @@ public class DirectionalDriveFragment extends Fragment{
         });
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
-        boolean speedDefault = pref.getBoolean("speedCheckBox",false);
-        if(speedDefault){
-            defaultSpeed = 100;
-        } else{
-            defaultSpeed = 75;
+        String defaultSpeed = pref.getString("speedSetting", "75");
+        powerControl.setProgress(Integer.parseInt(defaultSpeed));
+        String defaultMotors = pref.getString("servoPortSetting","A and B");
+        switch(defaultMotors){
+            case "1": //A and B
+                leftMotor = 0x00;
+                rightMotor = 0x01;
+                break;
+            case "2": //B and C
+                leftMotor = 0x01;
+                rightMotor = 0x02;
+                break;
+            case "3": //A and C
+                leftMotor = 0x00;
+                rightMotor = 0x02;
+                break;
         }
-
-        powerControl.setProgress(defaultSpeed);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
-        boolean defaultSpeed = pref.getBoolean("speedCheckBox",false);
-        if(defaultSpeed){
-            powerControl.setProgress(100);
-        }
-        else{
-            powerControl.setProgress(75);
+        String defaultSpeed = pref.getString("speedSetting", "75");
+        powerControl.setProgress(Integer.parseInt(defaultSpeed));
+        String defaultMotors = pref.getString("servoPortSetting","1");
+        switch(defaultMotors){
+            case "1": //A and B
+                leftMotor = 0x00;
+                rightMotor = 0x01;
+                break;
+            case "2": //B and C
+                leftMotor = 0x01;
+                rightMotor = 0x02;
+                break;
+            case "3": //A and C
+                leftMotor = 0x00;
+                rightMotor = 0x02;
+                break;
         }
     }
 
@@ -150,9 +169,9 @@ public class DirectionalDriveFragment extends Fragment{
                     byte power = (byte) powerControl.getProgress();
                     byte l = (byte) (power * lmod);
                     byte r = (byte) (power * rmod);
-                    BTChatService.motors(l, r, false, false);
+                    BTChatService.motors(leftMotor, rightMotor, l, r, false, false);
                 } else if ((action == MotionEvent.ACTION_UP) || (action == MotionEvent.ACTION_CANCEL)) {
-                    BTChatService.motors((byte) 0, (byte) 0, false, false);
+                    BTChatService.motors(leftMotor,rightMotor,(byte) 0, (byte) 0, false, false);
                 }
             }
             else

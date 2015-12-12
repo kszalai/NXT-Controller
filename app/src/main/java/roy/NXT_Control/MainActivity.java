@@ -1,10 +1,6 @@
 package roy.NXT_Control;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -14,9 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import roy.NXT_Control.BTConnection.BluetoothChatService;
 
@@ -62,7 +55,8 @@ public class  MainActivity extends AppCompatActivity implements FragCommunicator
 
         switch(id){
             case R.id.action_preferences:
-                startActivity(new Intent(this,EditPreferences.class));
+                Intent intent = new Intent(this,EditPreferences.class);
+                startActivity(intent);
                 break;
             case R.id.action_about:
                 break;
