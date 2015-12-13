@@ -215,7 +215,15 @@ public class ConnectionFragment extends Fragment{
                 BTChatService.getBatteryLevel();
             }
         };
-        batteryTimer.schedule(getBatteryLevel,0,10000*batteryTimeInterval);
+        if(batteryTimeInterval!=0) {
+            batteryTimer.schedule(getBatteryLevel, 0, 10000 * batteryTimeInterval);
+        }
+        else{
+            if(batteryTimer!=null) {
+                batteryTimer.cancel();
+                batteryTimer = new Timer();
+            }
+        }
     }
 
     private final Handler mHandler = new Handler() {
