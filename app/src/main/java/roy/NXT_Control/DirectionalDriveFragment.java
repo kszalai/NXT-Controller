@@ -1,5 +1,7 @@
 package roy.NXT_Control;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,6 +28,8 @@ public class DirectionalDriveFragment extends Fragment{
     SeekBar powerControl;
     TextView powerAmount;
     RelativeLayout driveFrag;
+    private byte leftMotor;
+    private byte rightMotor;
 
     //Bluetooth Stuff Needed
     BluetoothChatService BTChatService;
@@ -70,7 +74,7 @@ public class DirectionalDriveFragment extends Fragment{
         swapToTilt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(BTChatService!=null) {
+                if (BTChatService != null) {
                     FragmentTransaction ft = getFragmentManager().beginTransaction();
                     TiltDriveFragment tiltDrive = new TiltDriveFragment();
                     tiltDrive.receiveBTchat(BTChatService);
@@ -79,9 +83,8 @@ public class DirectionalDriveFragment extends Fragment{
                     ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                     ft.addToBackStack(null);
                     ft.commit();
-                }
-                else
-                    Toast.makeText(getContext(),"Connect a device before changing drive modes!",Toast.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(getContext(), "Connect a device before changing drive modes!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -102,6 +105,48 @@ public class DirectionalDriveFragment extends Fragment{
                 //Required but unused
             }
         });
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+        String defaultSpeed = pref.getString("speedSetting", "75");
+        powerControl.setProgress(Integer.parseInt(defaultSpeed));
+        String defaultMotors = pref.getString("servoPortSetting","A and B");
+        switch(defaultMotors){
+            case "1": //A and B
+                leftMotor = 0x00;
+                rightMotor = 0x01;
+                break;
+            case "2": //B and C
+                leftMotor = 0x01;
+                rightMotor = 0x02;
+                break;
+            case "3": //A and C
+                leftMotor = 0x00;
+                rightMotor = 0x02;
+                break;
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+        String defaultSpeed = pref.getString("speedSetting", "75");
+        powerControl.setProgress(Integer.parseInt(defaultSpeed));
+        String defaultMotors = pref.getString("servoPortSetting","1");
+        switch(defaultMotors){
+            case "1": //A and B
+                leftMotor = 0x00;
+                rightMotor = 0x01;
+                break;
+            case "2": //B and C
+                leftMotor = 0x01;
+                rightMotor = 0x02;
+                break;
+            case "3": //A and C
+                leftMotor = 0x00;
+                rightMotor = 0x02;
+                break;
+        }
     }
 
     //For Directional Drive Buttons
@@ -124,9 +169,9 @@ public class DirectionalDriveFragment extends Fragment{
                     byte power = (byte) powerControl.getProgress();
                     byte l = (byte) (power * lmod);
                     byte r = (byte) (power * rmod);
-                    BTChatService.motors(l, r, false, false);
+                    BTChatService.motors(leftMotor, rightMotor, l, r, false, false);
                 } else if ((action == MotionEvent.ACTION_UP) || (action == MotionEvent.ACTION_CANCEL)) {
-                    BTChatService.motors((byte) 0, (byte) 0, false, false);
+                    BTChatService.motors(leftMotor,rightMotor,(byte) 0, (byte) 0, false, false);
                 }
             }
             else

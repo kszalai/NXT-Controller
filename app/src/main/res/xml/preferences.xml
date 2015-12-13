@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/prefsect_polling"
+        android:summary="@string/prefsect_pollingSummary">
+
+        <ListPreference
+            android:key="timeIntervalListPref"
+            android:title="@string/pref_interval"
+            android:summary="@string/pref_intervalSummary"
+            android:entries="@array/timeIntervalArray"
+            android:entryValues="@array/timeIntervalArrayValues"
+            android:defaultValue="1 Minute"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/prefsect_servo"
+        android:summary="@string/prefsect_servoSummary">
+
+        <EditTextPreference
+            android:key="speedSetting"
+            android:title="@string/pref_speed"
+            android:summary="@string/pref_speedSummary"
+            android:defaultValue="75" />
+
+        <ListPreference
+            android:key="servoPortSetting"
+            android:title="@string/pref_ports"
+            android:summary="@string/pref_portsSummary"
+            android:entries="@array/portsArray"
+            android:entryValues="@array/portsArrayValues"
+            android:defaultValue="A and B"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

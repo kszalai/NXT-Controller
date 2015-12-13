@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +45,7 @@ public class ConnectionFragment extends Fragment{
     private TextView batteryAmount;
     private ToggleButton connectButton;
     private Timer batteryTimer;
+    private int batteryTimeInterval;
 
     FragCommunicator fc;
 
@@ -70,7 +73,7 @@ public class ConnectionFragment extends Fragment{
 
         fc = (FragCommunicator)getActivity();
 
-        BTChatService = new BluetoothChatService(getContext(),mHandler);
+        BTChatService = new BluetoothChatService(getActivity().getBaseContext(),mHandler);
 
         bluetoothIcon = (ImageView) v.findViewById(R.id.bt_icon);
 
@@ -92,8 +95,7 @@ public class ConnectionFragment extends Fragment{
                 //Toggles the Button through on and off
                 if (connectButton.isChecked()) { //Button says Connect
                     findDevice();
-                }
-                else { //Button says Disconnect
+                } else { //Button says Disconnect
                     disconnectDevice();
                 }
             }
@@ -105,6 +107,20 @@ public class ConnectionFragment extends Fragment{
         batteryLevel.setEnabled(false);
 
         batteryTimer = new Timer();
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+        String defaultTimeInterval = pref.getString("timeIntervalListPref", "1");
+        switch(defaultTimeInterval){
+            case "1": //1 minute
+                batteryTimeInterval = 60;
+                break;
+            case "2": //2 minutes
+                batteryTimeInterval = 120;
+                break;
+            case "3": //Never
+                batteryTimeInterval = 0;
+                break;
+        }
     }
 
     private void disconnectDevice() {
@@ -171,6 +187,24 @@ public class ConnectionFragment extends Fragment{
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+        String defaultTimeInterval = pref.getString("timeIntervalListPref", "1");
+        switch(defaultTimeInterval){
+            case "1": //1 minute
+                batteryTimeInterval = 60;
+                break;
+            case "2": //2 minutes
+                batteryTimeInterval = 120;
+                break;
+            case "3": //Never
+                batteryTimeInterval = 0;
+                break;
+        }
+    }
+
     private void isConnectedRunning(){
         while(BTChatService.getState()!=BTChatService.STATE_CONNECTED){
             //Waiting for thread to start, do nothing
@@ -181,7 +215,15 @@ public class ConnectionFragment extends Fragment{
                 BTChatService.getBatteryLevel();
             }
         };
-        batteryTimer.schedule(getBatteryLevel,0,10000*60);
+        if(batteryTimeInterval!=0) {
+            batteryTimer.schedule(getBatteryLevel, 0, 10000 * batteryTimeInterval);
+        }
+        else{
+            if(batteryTimer!=null) {
+                batteryTimer.cancel();
+                batteryTimer = new Timer();
+            }
+        }
     }
 
     private final Handler mHandler = new Handler() {

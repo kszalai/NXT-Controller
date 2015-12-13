@@ -28,4 +28,18 @@
 
     <!-- SensorFragment -->
     <string name="sensorDialog">Select NXT Sensor Type</string>
+
+    <!-- Preferences -->
+    <string name="pref_ports">Ports In Use</string>
+    <string name="pref_portsSummary">Select which 2 ports to use to drive the robot</string>
+    <string name="pref_speed">Default Speed</string>
+    <string name="pref_speedSummary">Set default power level for driving</string>
+    <string name="pref_interval">Time Interval</string>
+    <string name="pref_intervalSummary">Time between each battery information poll</string>
+
+    <!-- Preferences Headers -->
+    <string name="prefsect_polling">Polling Settings</string>
+    <string name="prefsect_pollingSummary">How often to poll the different sensors/servos</string>
+    <string name="prefsect_servo">Servo Settings</string>
+    <string name="prefsect_servoSummary">Settings to control default stuff for the servos</string>
 </resources>

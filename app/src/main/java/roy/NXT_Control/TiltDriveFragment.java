@@ -1,11 +1,13 @@
 package roy.NXT_Control;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -23,6 +25,8 @@ public class TiltDriveFragment extends Fragment implements SensorEventListener {
     private SensorManager mSensorManager;
     private Button swapToDirectional;
     private RelativeLayout tiltFrag;
+    private byte leftMotor;
+    private byte rightMotor;
 
     //Bluetooth Stuff needed
     BluetoothChatService BTChatService;
@@ -59,7 +63,7 @@ public class TiltDriveFragment extends Fragment implements SensorEventListener {
         swapToDirectional.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BTChatService.motors((byte) 0, (byte) 0, false, false);
+                BTChatService.motors(leftMotor,rightMotor,(byte) 0, (byte) 0, false, false);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 DirectionalDriveFragment directionalDrive = new DirectionalDriveFragment();
                 directionalDrive.receiveBTchat(BTChatService);
@@ -73,6 +77,23 @@ public class TiltDriveFragment extends Fragment implements SensorEventListener {
 
         //Setup SensorManager and Gyroscope Sensor
         mSensorManager = (SensorManager)getActivity().getSystemService(Context.SENSOR_SERVICE);
+
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+        String defaultMotors = pref.getString("servoPortSetting", "A and B");
+        switch(defaultMotors){
+            case "1": //A and B
+                leftMotor = 0x00;
+                rightMotor = 0x01;
+                break;
+            case "2": //B and C
+                leftMotor = 0x01;
+                rightMotor = 0x02;
+                break;
+            case "3": //A and C
+                leftMotor = 0x00;
+                rightMotor = 0x02;
+                break;
+        }
     }
 
     @Override
@@ -113,10 +134,10 @@ public class TiltDriveFragment extends Fragment implements SensorEventListener {
                 }
                 l *= power;
                 r *= power;
-                BTChatService.motors((byte) (100 * l), (byte) (100 * r), false, false);
+                BTChatService.motors(leftMotor,rightMotor,(byte) (100 * l), (byte) (100 * r), false, false);
             }
             else{
-                BTChatService.motors((byte) 0, (byte) 0, false, false);
+                BTChatService.motors(leftMotor,rightMotor,(byte) 0, (byte) 0, false, false);
             }
         }
     }
@@ -130,6 +151,22 @@ public class TiltDriveFragment extends Fragment implements SensorEventListener {
     public void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), mSensorManager.SENSOR_DELAY_GAME);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+        String defaultMotors = pref.getString("servoPortSetting", "A and B");
+        switch(defaultMotors){
+            case "1": //A and B
+                leftMotor = 0x00;
+                rightMotor = 0x01;
+                break;
+            case "2": //B and C
+                leftMotor = 0x01;
+                rightMotor = 0x02;
+                break;
+            case "3": //A and C
+                leftMotor = 0x00;
+                rightMotor = 0x02;
+                break;
+        }
     }
 
     @Override
