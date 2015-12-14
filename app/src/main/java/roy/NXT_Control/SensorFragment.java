@@ -19,6 +19,8 @@ public class SensorFragment extends Fragment {
 
     private static final int REQUEST_NEW_SENSOR = 1;
 
+    ArrayList<SensorListData> lv_listItems;
+    SensorListAdapter lv_adapter;
     FragCommunicator fc;
 
     public static int[] sensorImages = {
@@ -59,12 +61,12 @@ public class SensorFragment extends Fragment {
         ImageView[] cv_imageArray = {null, null, null, null, null, null, null};
         ToggleButton[] cv_buttonArray = {null, null, null, null, null, null, null};
 
-        ArrayList<SensorListData> lv_listItems = new ArrayList<SensorListData>();
+        lv_listItems = new ArrayList<SensorListData>();
         for (int i = 0; i < cv_numberArray.length; i++) {
             lv_listItems.add(new SensorListData(cv_numberArray[i], cv_buttonArray[i]));
         }
 
-        SensorListAdapter lv_adapter = new SensorListAdapter(getContext(), cv_numberArray, sensorImages);
+        lv_adapter = new SensorListAdapter(getContext(), cv_numberArray, sensorImages);
 
         ListView listView = (ListView) v.findViewById(R.id.xv1_sensorList);
         listView.setAdapter(lv_adapter);
@@ -76,20 +78,27 @@ public class SensorFragment extends Fragment {
                 switch (position) {
                     case 0:
                         sensorIntent = new Intent(getContext(), SensorDialog.class);
+                        sensorIntent.putExtra("clicked",position);
+                        startActivityForResult(sensorIntent, REQUEST_NEW_SENSOR);
                         break;
                     case 1:
                         sensorIntent = new Intent(getContext(), SensorDialog.class);
+                        sensorIntent.putExtra("clicked",position);
+                        startActivityForResult(sensorIntent, REQUEST_NEW_SENSOR);
                         break;
                     case 2:
                         sensorIntent = new Intent(getContext(), SensorDialog.class);
+                        sensorIntent.putExtra("clicked",position);
+                        startActivityForResult(sensorIntent, REQUEST_NEW_SENSOR);
                         break;
                     case 3:
                         sensorIntent = new Intent(getContext(), SensorDialog.class);
+                        sensorIntent.putExtra("clicked",position);
+                        startActivityForResult(sensorIntent, REQUEST_NEW_SENSOR);
                         break;
                     default:
                         break;
                 }
-                startActivityForResult(sensorIntent, REQUEST_NEW_SENSOR);
                 //Toast.makeText(getContext(), "Clicked item at position " + position, Toast.LENGTH_LONG).show();
             }
         });
@@ -101,7 +110,25 @@ public class SensorFragment extends Fragment {
             case REQUEST_NEW_SENSOR:
                 if(resultCode == Activity.RESULT_OK){
                     //To swap when implemented
-                    //String sensor = data.getExtras().getString(SensorDialog.EXTRA_SENSOR);
+                    int sensor = data.getExtras().getInt(SensorDialog.EXTRA_SENSOR);
+                    int itemClicked = data.getExtras().getInt("clicked");
+                    int newImage = 0;
+                    switch(sensor){
+                        case 0:
+                            newImage = R.drawable.nxt_light_120;
+                            break;
+                        case 1:
+                            newImage = R.drawable.nxt_sound_120;
+                            break;
+                        case 2:
+                            newImage = R.drawable.nxt_touch_120;
+                            break;
+                        case 3:
+                            newImage = R.drawable.nxt_distance_120;
+                            break;
+                    }
+                    lv_adapter.setImageAt(itemClicked,newImage);
+                    lv_adapter.notifyDataSetChanged();
                     //Toast.makeText(getContext(), sensor, Toast.LENGTH_SHORT).show();
                 } else {
                     //Toast.makeText(getContext(), "Back was pressed", Toast.LENGTH_SHORT).show();
