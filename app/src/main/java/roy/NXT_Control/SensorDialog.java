@@ -20,10 +20,16 @@ public class SensorDialog extends AppCompatActivity {
             R.drawable.nxt_touch_120,
             R.drawable.nxt_distance_120};
 
+    private int itemClicked;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sensor_dialog);
+
+        if (getIntent() != null) {
+            itemClicked = getIntent().getIntExtra("clicked",-1);
+        }
 
         String[] cv_labelArray = {"Light Sensor", "Sound Sensor", "Touch Sensor", "Distance Sensor"};
 
@@ -43,7 +49,7 @@ public class SensorDialog extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent();
                 intent.putExtra(EXTRA_SENSOR, position);
-
+                intent.putExtra("clicked",itemClicked);
                 setResult(RESULT_OK,intent);
                 finish();
             }

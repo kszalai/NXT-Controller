@@ -31,6 +31,10 @@ public class SensorListAdapter extends BaseAdapter{
         return position;
     }
 
+    public void setImageAt(int position, int image){
+        imageId[position] = image;
+    }
+
     @Override
     public long getItemId(int position) {
         return position;

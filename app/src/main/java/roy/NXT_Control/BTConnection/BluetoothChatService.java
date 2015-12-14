@@ -186,6 +186,44 @@ public class BluetoothChatService {
         write(data);
     }
 
+    public void playTone(int frequency, int duration){
+        //0x03
+        byte [] data = new byte[8];
+
+        data[0] = (byte) (8-2);     //length lsb
+        data[1] = 0;                //length msb
+        data[2] = (byte) 0x00;      //No response
+        data[3] = 0x03;             //Play a tone
+        data[4] = (byte) (frequency%256); //First part of frequency
+        data[5] = (byte) (frequency/256); //Second part of frequecny
+        data[6] = (byte) (duration%256);  //First part of duration
+        data[7] = (byte) (duration/256);  //Second part of duration
+
+        write(data);
+    }
+
+    public void playSong(){
+        try {
+            Thread.sleep(3000);		// wait for the battery to poll
+            playTone(660, 100);		// do
+            Thread.sleep(150);
+            playTone(660, 100);		// do
+            Thread.sleep(300);
+            playTone(660, 100);		// do
+            Thread.sleep(300);
+            playTone(510, 100);		// da
+            Thread.sleep(100);
+            playTone(660, 100);		// do
+            Thread.sleep(300);
+            playTone(770, 100);		// dooo
+            Thread.sleep(550);
+            playTone(380, 100);		// dum
+            Thread.sleep(575);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void write(byte[] out) {
         ConnectedThread r;
         synchronized (this) {
