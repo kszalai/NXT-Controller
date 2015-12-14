@@ -77,18 +77,27 @@
             android:layout_marginLeft="25dp"
             android:layout_marginTop="25dp" />
 
-        <SeekBar
+        <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/sb_batteryLevel"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:indeterminate="false"
+            android:id="@+id/pb_batteryLevel"
             android:layout_below="@+id/tv_batteryLevel"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginLeft="25dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginRight="25dp"
             android:layout_marginTop="10dp"
-            android:max="100"
-            android:clickable="false" />
+            android:maxHeight="30dip"
+            android:minHeight="30dip"
+            android:progress="0"
+            android:clickable="false"
+            android:progressDrawable="@drawable/green_progress"/>
 
         <TextView
             android:layout_width="wrap_content"

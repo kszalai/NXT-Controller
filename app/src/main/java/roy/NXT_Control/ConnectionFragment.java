@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,7 +42,7 @@ public class ConnectionFragment extends Fragment{
     private ImageView bluetoothIcon;
     private TextView status;
     private TextView device;
-    private SeekBar batteryLevel;
+    private ProgressBar batteryLevel;
     private TextView batteryAmount;
     private ToggleButton connectButton;
     private Timer batteryTimer;
@@ -102,7 +103,7 @@ public class ConnectionFragment extends Fragment{
         });
 
         //Battery Level
-        batteryLevel = (SeekBar)v.findViewById(R.id.sb_batteryLevel);
+        batteryLevel = (ProgressBar)v.findViewById(R.id.pb_batteryLevel);
         batteryAmount = (TextView)v.findViewById(R.id.tv_batteryAmount);
         batteryLevel.setEnabled(false);
 
