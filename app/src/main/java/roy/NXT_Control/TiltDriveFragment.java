@@ -21,7 +21,6 @@ import roy.NXT_Control.BTConnection.BluetoothChatService;
 
 public class TiltDriveFragment extends Fragment implements SensorEventListener {
 
-    private TextView powerLevel;
     private SensorManager mSensorManager;
     private Button swapToDirectional;
     private RelativeLayout tiltFrag;
@@ -52,9 +51,6 @@ public class TiltDriveFragment extends Fragment implements SensorEventListener {
         super.onActivityCreated(savedInstanceState);
 
         View v = getView();
-
-        //Find powerLevel TextView
-        powerLevel = (TextView)v.findViewById(R.id.tv_tiltPowerLevel);
 
         tiltFrag = (RelativeLayout)v.findViewById(R.id.tiltFrag);
 
